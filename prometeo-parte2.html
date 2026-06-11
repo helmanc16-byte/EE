@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prometeo vs Epimeteo · Parte 2 — Data &amp; Automatización</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Poppins:wght@400;500;600;700&family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
+:root{
+  --bg:#FAF9F6;--bg2:#F2EDE4;--bg3:#EDE8DE;
+  --white:#FFFFFF;--border:#E5E0D8;--border2:#D6CFC4;
+  --text:#111827;--text2:#1F2937;--muted:#4B5563;
+  --pro:#C2600A;--pro-l:#FEF3C7;--pro-d:#92400E;
+  --epi:#0369A1;--epi-l:#E0F2FE;--epi-d:#075985;
+  --fire:#F59E0B;--ember:#DC2626;--green:#059669;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
+  --shadow-lg:0 4px 6px rgba(0,0,0,.07),0 12px 40px rgba(0,0,0,.1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Open Sans',sans-serif;font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;}
+#pbar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--ember),var(--fire));width:0;z-index:1000;}
+nav{position:fixed;top:3px;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:11px 32px;background:rgba(250,249,246,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);z-index:999;}
+.nav-brand{font-family:'Montserrat',sans-serif;font-size:12px;color:var(--pro);letter-spacing:3px;font-weight:700;}
+.nav-dots{display:flex;gap:7px;}
+.nav-dot{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--border2);cursor:pointer;transition:all .25s;}
+.nav-dot.active{background:var(--pro);border-color:var(--pro);}
+.nav-parts{display:flex;gap:6px;}
+.part-link{font-size:11px;padding:5px 12px;border-radius:20px;border:1px solid var(--border2);color:var(--muted);text-decoration:none;transition:all .2s;font-weight:500;}
+.part-link:hover{border-color:var(--pro);color:var(--pro);}
+.part-link.current{background:var(--pro);color:#fff;border-color:var(--pro);}
+section{min-height:100vh;padding:60px 40px 60px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;}
+.container{max-width:1080px;margin:0 auto;width:100%;}
+.s-label{font-family:'Montserrat',sans-serif;font-size:10px;letter-spacing:5px;color:var(--pro);text-transform:uppercase;margin-bottom:14px;opacity:.8;}
+.s-title{font-family:'Montserrat',sans-serif;font-size:clamp(28px,4vw,46px);font-weight:700;line-height:1.15;margin-bottom:18px;}
+.s-body{font-size:17px;line-height:1.78;color:var(--text2);max-width:760px;}
+.act-badge{display:inline-flex;align-items:center;gap:9px;padding:7px 18px;border-radius:24px;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:22px;}
+.act-num{font-family:'Montserrat',sans-serif;font-size:110px;font-weight:900;color:rgba(0,0,0,.035);position:absolute;top:36px;right:36px;line-height:1;pointer-events:none;user-select:none;}
+.meta-box{border-left:4px solid var(--pro);border-radius:0 14px 14px 0;padding:22px 26px;margin:28px 0;}
+.meta-box.amber{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border-color:var(--pro);}
+.meta-box.green{background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border-color:var(--green);}
+.meta-box.blue{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-color:var(--epi);}
+.meta-box.gray{background:var(--bg2);border-color:var(--border2);}
+.meta-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:8px;}
+.meta-box.amber .meta-label{color:var(--pro);}
+.meta-box.green .meta-label{color:var(--green);}
+.meta-box.blue .meta-label{color:var(--epi);}
+.meta-box.gray .meta-label{color:var(--muted);}
+.meta-text{font-size:16px;line-height:1.72;color:var(--text2);font-style:italic;}
+.cite{font-size:12px;color:var(--muted);margin-top:10px;font-style:italic;border-left:2px solid var(--border2);padding-left:10px;}
+.divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);margin:48px 0;}
+
+/* VS GRID */
+.vs-wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:22px;align-items:start;margin:36px 0;}
+@media(max-width:768px){.vs-wrap{grid-template-columns:1fr;}.vs-mid{display:none;}nav{padding:10px 16px;}section{padding:80px 20px 50px;}.nav-parts{display:none;}}
+.vs-col{display:flex;flex-direction:column;gap:14px;}
+.vs-head{display:flex;align-items:center;gap:10px;padding:11px 18px;border-radius:12px;margin-bottom:2px;}
+.vs-head.pro{background:var(--pro-l);border:1px solid rgba(194,96,10,.2);}
+.vs-head.epi{background:var(--epi-l);border:1px solid rgba(3,105,161,.18);}
+.vs-head .hname{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;}
+.vs-head.pro .hname{color:var(--pro);}
+.vs-head.epi .hname{color:var(--epi);}
+.vs-mid{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:900;color:var(--muted);display:flex;align-items:center;justify-content:center;padding-top:54px;}
+.vs-item{background:var(--white);border-radius:14px;padding:18px 20px;border:1px solid var(--border);box-shadow:var(--shadow);font-size:14px;line-height:1.62;transition:transform .2s,box-shadow .2s;cursor:default;}
+.vs-item:hover{transform:scale(1.01);box-shadow:var(--shadow-lg);}
+.vs-item.pro{border-left:3px solid var(--pro);}
+.vs-item.epi{border-left:3px solid var(--epi);}
+.vs-icon{font-size:18px;margin-bottom:7px;display:block;}
+.vs-item strong{color:var(--text);}
+.vs-item .sub{font-size:12px;color:var(--muted);margin-top:7px;font-style:italic;}
+
+/* CASE CARD */
+.case-card{background:var(--white);border-radius:18px;padding:28px 30px;border:1px solid var(--border);box-shadow:var(--shadow);margin:16px 0;}
+.case-header{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+.case-logo{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.case-title{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:700;color:var(--text);}
+.case-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.case-body{font-size:14px;line-height:1.68;color:var(--text2);}
+.case-metrics{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap;}
+.metric{background:var(--bg2);border-radius:10px;padding:12px 16px;text-align:center;flex:1;min-width:100px;}
+.metric-val{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:700;color:var(--pro);}
+.metric-lbl{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4;}
+
+/* STAT */
+.stat-row{margin:16px 0;}
+.stat-label{font-size:13px;color:var(--text2);margin-bottom:6px;display:flex;justify-content:space-between;}
+.stat-label strong{color:var(--pro);}
+.stat-track{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+.stat-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--ember),var(--fire));animation:grow 1.5s ease forwards;width:0;}
+@keyframes grow{to{width:var(--w);}}
+.stat-fill.green{background:linear-gradient(90deg,#059669,#10B981);}
+
+/* PROCESS STEPS */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:32px 0;}
+@media(max-width:768px){.steps{grid-template-columns:1fr 1fr;}}
+.step{background:var(--white);border-radius:14px;padding:20px;border:1px solid var(--border);box-shadow:var(--shadow);text-align:center;position:relative;}
+.step-num{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:900;color:var(--pro);margin-bottom:8px;}
+.step-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;}
+.step-body{font-size:12px;color:var(--muted);line-height:1.55;}
+
+/* COMPARISON TABLE */
+.comp-table{width:100%;border-collapse:collapse;margin:24px 0;background:var(--white);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);}
+.comp-table th{padding:14px 18px;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-family:'Montserrat',sans-serif;font-weight:700;}
+.comp-table th:first-child{background:var(--bg2);color:var(--muted);text-align:left;}
+.comp-table th.pro-th{background:var(--pro-l);color:var(--pro-d);}
+.comp-table th.epi-th{background:var(--epi-l);color:var(--epi-d);}
+.comp-table td{padding:13px 18px;font-size:13px;border-top:1px solid var(--border);color:var(--text2);vertical-align:top;line-height:1.55;}
+.comp-table td:first-child{font-weight:600;color:var(--text);background:rgba(0,0,0,.01);}
+.comp-table tr:hover td{background:rgba(0,0,0,.015);}
+.t-good{color:#065F46;font-weight:600;}
+.t-bad{color:#991B1B;font-weight:600;}
+
+.part-nav{display:flex;justify-content:space-between;align-items:center;padding:28px 40px;border-top:1px solid var(--border);background:var(--white);}
+.part-nav a{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--pro);text-decoration:none;padding:10px 22px;border-radius:24px;border:1.5px solid rgba(194,96,10,.3);transition:all .2s;}
+.part-nav a:hover{background:var(--pro);color:#fff;border-color:var(--pro);}
+.part-nav .center{font-family:'Montserrat',sans-serif;font-size:12px;color:var(--muted);letter-spacing:2px;}
+.fi{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease;}
+.fi.v{opacity:1;transform:translateY(0);}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}.d4{transition-delay:.4s;}
+footer{text-align:center;padding:28px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);}
+
+/* ── TYPOGRAPHY LAYER ── */
+.nav-brand,.s-label,.meta-label,.act-badge,.char-myth,.case-sub,.brand-label,
+.char-tag,.vs-head .hname,.tl-title,.step-title,.t-good,.t-bad,.metric-lbl,
+.part-nav .center,.stat-label,.comp-table th{font-family:'Poppins',sans-serif;}
+.s-title,.hero-title,.char-name,.outcome-title,.cta-title,.pillar-title,.case-title,.act-num{font-family:'Montserrat',sans-serif;letter-spacing:-.25px;font-weight:800;}
+.s-body,.char-desc,.vs-item,.case-body,.meta-text,.tl-body,.step-body,
+.pillar-desc,.expand-inner,.out-item .body,.comp-table td,.eval-result{font-family:'Open Sans',sans-serif;color:var(--text2);line-height:1.82;}
+.s-title{font-weight:800;}.s-body{font-size:17px;}.meta-text{font-size:15.5px;}
+strong{color:var(--text);font-weight:700;}
+/* Tip IA box */
+.tip-ia{background:#EFF6FF;border-radius:16px;padding:26px 30px;border:1px solid rgba(37,99,235,.18);margin-top:32px;}
+.tip-ia-title{font-family:'Poppins',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#2563EB;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.tip-ia-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:768px){.tip-ia-grid{grid-template-columns:1fr;}}
+.tip-ia-card{background:#fff;border-radius:10px;padding:16px;border:1px solid rgba(37,99,235,.12);}
+.tip-ia-card h4{font-family:'Poppins',sans-serif;font-weight:700;color:#1E3A8A;font-size:13px;margin-bottom:6px;}
+.tip-ia-card p{font-family:'Open Sans',sans-serif;font-size:13px;color:#374151;line-height:1.7;}
+.dato-clave{display:flex;align-items:flex-start;gap:14px;background:#FFFBEB;border:1px solid rgba(194,96,10,.2);border-radius:12px;padding:16px 20px;margin:12px 0;}
+.dato-clave .dk-icon{font-size:22px;flex-shrink:0;margin-top:1px;}
+.dato-clave .dk-text{font-family:'Open Sans',sans-serif;font-size:13px;color:#1F2937;line-height:1.7;}
+.dato-clave .dk-text strong{color:var(--pro);}
+/* Subclasses for tips section */
+.tip-ia .tip-title{font-family:'Poppins',sans-serif;font-weight:700;color:#1D4ED8;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+.tip-ia ul{margin:0;padding-left:20px;font-family:'Open Sans',sans-serif;font-size:15px;line-height:1.8;color:#1E40AF;}
+.dato-clave .dato-label{font-family:'Poppins',sans-serif;font-weight:700;color:#92400E;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+.dato-clave p{font-family:'Open Sans',sans-serif;font-size:15px;line-height:1.8;color:#78350F;}
+/* Stronger color contrast for section text */
+.s-title,.act-title,.case-title{font-family:'Montserrat',sans-serif;font-weight:800;color:var(--text);}
+.s-label,.nav-brand,.meta-label,.badge{font-family:'Poppins',sans-serif;}
+</style>
+</head>
+<body>
+<div id="pbar"></div>
+
+<!-- ACT I: DATA ANALYSIS -->
+<section id="data-acto" style="background:linear-gradient(155deg,#FAF9F6 0%,#F5EDD8 100%);">
+  <div class="act-num">01</div>
+  <div class="container">
+    <div class="act-badge fi" style="background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.25);color:#6D28D9;">📊 Acto I · Data Analysis</div>
+    <h2 class="s-title fi d1">La diferencia entre<br>ver y predecir</h2>
+    <p class="s-body fi d2">Epimeteo tiene datos. Prometeo tiene <strong>inteligencia sobre sus datos</strong>. La diferencia parece sutil; en los resultados del negocio, es la diferencia entre liderar el mercado y perseguirlo.</p>
+
+    <div class="meta-box amber fi d3">
+      <p class="meta-label">🔭 La Metáfora del Telescopio</p>
+      <p class="meta-text">Epimeteo mira el cielo nocturno a simple vista: ve estrellas del pasado (la luz que llega ya tiene miles de años). Prometeo usa un telescopio con IA: sabe cuáles están en movimiento, cuáles en expansión y cuál tiene un planeta habitable. Los dos miran el mismo mercado. Solo uno toma decisiones basadas en lo que viene.</p>
+    </div>
+
+    <div class="vs-wrap fi d4">
+      <div class="vs-col">
+        <div class="vs-head pro"><span>🔥</span><span class="hname">Prometeo S.A.</span></div>
+        <div class="vs-item pro">
+          <span class="vs-icon">📈</span>
+          <strong>Predicción de demanda.</strong> Su modelo de IA analiza historial de ventas, clima, eventos locales y señales de redes sociales para predecir qué venderá la próxima semana con 87% de precisión. El inventario se ajusta automáticamente.
+          <p class="sub">Resultado: -25% sobrestock, -18% ruptura de stock</p>
+        </div>
+        <div class="vs-item pro">
+          <span class="vs-icon">🎯</span>
+          <strong>Segmentación inteligente en tiempo real.</strong> Identifica automáticamente los 20% de clientes que generan el 80% del ingreso. Activa atención prioritaria, propuestas personalizadas y alertas de riesgo antes de que el cliente piense en irse.
+          <p class="sub">Resultado: +34% retención en clientes de alto valor</p>
+        </div>
+        <div class="vs-item pro">
+          <span class="vs-icon">⚠️</span>
+          <strong>Detección temprana de problemas.</strong> El sistema monitorea 47 KPIs en tiempo real. Si una métrica baja del umbral, alerta al responsable antes de que el cliente se queje o el problema escale a crisis.
+          <p class="sub">Resultado: 73% de problemas resueltos antes de que el cliente lo note</p>
+        </div>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-col">
+        <div class="vs-head epi"><span>🌊</span><span class="hname">Epimeteo Corp.</span></div>
+        <div class="vs-item epi">
+          <span class="vs-icon">📋</span>
+          <strong>Reportes retroactivos cada lunes.</strong> Las decisiones de la semana se toman sobre lo que ocurrió la semana pasada. Para cuando actúan, la oportunidad ya pasó o el problema ya creció.
+          <p class="sub">Latencia decisional: 7-14 días promedio</p>
+        </div>
+        <div class="vs-item epi">
+          <span class="vs-icon">🗂️</span>
+          <strong>Datos en silos sin conexión.</strong> Tiene cientos de miles de registros de clientes distribuidos en 5 sistemas que nunca se cruzan. "Los datos están ahí, pero no tenemos tiempo de analizarlos" — frase literal de reuniones de dirección.
+          <p class="sub">Valor de datos aprovechado: estimado 8% del total disponible</p>
+        </div>
+        <div class="vs-item epi">
+          <span class="vs-icon">😮</span>
+          <strong>Sorpresas negativas recurrentes.</strong> Se enteran de que un cliente importante se fue cuando llega la baja en facturación del mes siguiente. La respuesta llega cuando ya no hay nada que salvar.
+          <p class="sub">Churn detectado post-facto: 89% de los casos</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DATA: CASOS REALES -->
+<section id="data-casos" style="background:linear-gradient(160deg,#F7F4EE 0%,#F0EBE0 100%);">
+  <div class="container">
+    <p class="s-label fi">Casos empresariales reales</p>
+    <h2 class="s-title fi d1">Cómo las empresas líderes<br>usan Data Analysis con IA</h2>
+    <p class="s-body fi d2">Estos no son experimentos del futuro. Son casos documentados de empresas que ya transformaron sus resultados usando análisis de datos con IA. El patrón es siempre el mismo: quienes lo adoptan primero capturan una ventaja que se vuelve estructural.</p>
+
+    <!-- Netflix -->
+    <div class="case-card fi d2">
+      <div class="case-header">
+        <div class="case-logo" style="background:#1A1A2E;color:#E50914;font-weight:900;font-size:18px;font-family:'Montserrat',sans-serif;">N</div>
+        <div><div class="case-title">Netflix</div><div class="case-sub">Streaming · 238M suscriptores · EE.UU.</div></div>
+      </div>
+      <p class="case-body">Netflix genera el <strong>80% de sus visualizaciones</strong> a partir de recomendaciones de su algoritmo de IA, no de búsquedas del usuario. Su sistema analiza más de 100 señales por usuario (historial, hora de visualización, dispositivo, comportamiento de pausa) para personalizar no solo qué recomienda, sino <em>qué imagen de portada</em> muestra a cada persona. Dos usuarios que ven el mismo contenido pueden ver thumbnails completamente distintos si la IA determinó que cada imagen genera mayor engagement para ese perfil.</p>
+      <div class="case-metrics">
+        <div class="metric"><div class="metric-val">$1B</div><div class="metric-lbl">Ahorro anual en retención gracias a personalización IA</div></div>
+        <div class="metric"><div class="metric-val">80%</div><div class="metric-lbl">Del contenido visto viene de recomendaciones algorítmicas</div></div>
+        <div class="metric"><div class="metric-val">+30%</div><div class="metric-lbl">Mayor tiempo de visualización por usuario activo</div></div>
+      </div>
+      <p class="cite">— Netflix Technology Blog, "System Architectures for Personalization and Recommendation", 2022 / McKinsey & Company analysis</p>
+    </div>
+
+    <!-- Walmart -->
+    <div class="case-card fi d3">
+      <div class="case-header">
+        <div class="case-logo" style="background:#0071CE;color:white;font-size:22px;">🛒</div>
+        <div><div class="case-title">Walmart</div><div class="case-sub">Retail · 10,500 tiendas globales · Ingresos $650B anuales</div></div>
+      </div>
+      <p class="case-body">Walmart implementó su plataforma de IA "Luminate" para análisis predictivo de toda su cadena de suministro. El sistema procesa datos de ventas en tiempo real de todas sus tiendas globales y ajusta automáticamente los pedidos a proveedores, los precios y la distribución de inventario. Antes de IA, el equipo de supply chain tardaba días en detectar desbalances regionales. Hoy, el sistema los detecta en minutos y propone acciones correctivas. <strong>En temporada navideña 2022</strong>, Walmart utilizó IA para predecir con 3 semanas de antelación cuáles tiendas necesitarían refuerzo de inventario, evitando el quiebre de stock que había afectado a competidores.</p>
+      <div class="case-metrics">
+        <div class="metric"><div class="metric-val">10%</div><div class="metric-lbl">Reducción de desperdicios en productos perecederos</div></div>
+        <div class="metric"><div class="metric-val">real-time</div><div class="metric-lbl">Visibilidad de inventario en 10,500 tiendas simultáneamente</div></div>
+        <div class="metric"><div class="metric-val">3 sem.</div><div class="metric-lbl">Anticipación en predicción de demanda pico</div></div>
+      </div>
+      <p class="cite">— Walmart Annual Report 2023 / Harvard Business Review, "How Walmart Automated Supplier Negotiations", 2023</p>
+    </div>
+
+    <div class="meta-box gray fi d4">
+      <p class="meta-label">💡 El Patrón Epimeteo en datos</p>
+      <p class="meta-text">"No tenemos suficientes datos todavía." — La frase más costosa del mundo empresarial. Todas las empresas tienen suficientes datos para empezar. El problema no es la cantidad de datos: es la decisión de analizarlos con inteligencia. Epimeteo esperó a tener "suficientes datos perfectos" mientras Prometeo empezó con los datos imperfectos que ya tenía y fue aprendiendo sobre la marcha.</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="fi" style="margin-top:36px;">
+      <h3 style="font-family:'Montserrat',sans-serif;font-size:18px;margin-bottom:20px;">Impacto medido del Data Analysis con IA</h3>
+      <div class="stat-row"><div class="stat-label"><span>Precisión en predicción de demanda (IA vs métodos tradicionales)</span><strong>87% vs 52%</strong></div><div class="stat-track"><div class="stat-fill" style="--w:87%"></div></div></div>
+      <div class="stat-row"><div class="stat-label"><span>Reducción de tiempo en análisis y reportes</span><strong>-68% tiempo</strong></div><div class="stat-track"><div class="stat-fill" style="--w:68%"></div></div></div>
+      <div class="stat-row"><div class="stat-label"><span>Clientes en riesgo detectados antes de la pérdida</span><strong>73% de detección temprana</strong></div><div class="stat-track"><div class="stat-fill" style="--w:73%"></div></div></div>
+      <div class="stat-row"><div class="stat-label"><span>Empresas con IA en datos que superan a competidores en crecimiento</span><strong>69% de casos</strong></div><div class="stat-track"><div class="stat-fill" style="--w:69%"></div></div></div>
+      <p class="cite">— MIT Sloan Management Review, "AI Advantages: Separating Hype from Reality" / Gartner Data & Analytics Summit 2024</p>
+    </div>
+  </div>
+</section>
+
+<!-- ACT II: AUTOMATIZACIÓN -->
+<section id="auto-acto" style="background:linear-gradient(155deg,#F0F9F4 0%,#ECFDF5 50%,#FAF9F6 100%);">
+  <div class="act-num" style="color:rgba(5,150,105,.04);">02</div>
+  <div class="container">
+    <div class="act-badge fi" style="background:rgba(5,150,105,.09);border:1px solid rgba(5,150,105,.25);color:#065F46;">⚙️ Acto II · Automatización</div>
+    <h2 class="s-title fi d1">Liberar el potencial humano<br>de lo que las máquinas pueden hacer</h2>
+    <p class="s-body fi d2">La automatización no reemplaza personas — las eleva. Cuando alguien deja de hacer tareas mecánicas, tiene espacio para crear, innovar y conectar. Prometeo entiende esto. Epimeteo cree que automatizar es "amenazar al equipo."</p>
+
+    <div class="meta-box green fi d3">
+      <p class="meta-label" style="color:var(--green);">🚜 La Metáfora del Tractor</p>
+      <p class="meta-text">Cuando llegaron los tractores, los granjeros que los adoptaron no perdieron su trabajo: pudieron cultivar 10 veces más tierra. Los que resistieron vendieron sus haciendas a quienes sí adoptaron la máquina. La automatización es el tractor de los procesos empresariales. La pregunta no es si adoptarla — es cuándo.</p>
+    </div>
+
+    <div class="vs-wrap fi d4">
+      <div class="vs-col">
+        <div class="vs-head pro"><span>🔥</span><span class="hname">Prometeo S.A.</span></div>
+        <div class="vs-item pro">
+          <span class="vs-icon">📧</span>
+          <strong>Marketing automatizado end-to-end.</strong> Sus campañas se disparan según el comportamiento del cliente: visita el sitio → oferta personalizada → compra → secuencia de fidelización automática. Sin intervención humana por evento.
+          <p class="sub">ROI de campaña: 4.2x vs 1.8x promedio industria</p>
+        </div>
+        <div class="vs-item pro">
+          <span class="vs-icon">📦</span>
+          <strong>Supply chain autónomo.</strong> Cuando el stock toca el umbral mínimo, el sistema genera y envía la orden al proveedor sin acción humana. Las alertas de desbalance se resuelven solas antes de que alguien llegue a la oficina.
+          <p class="sub">Quiebres de stock eliminados en 91% de los SKUs críticos</p>
+        </div>
+        <div class="vs-item pro">
+          <span class="vs-icon">👥</span>
+          <strong>Onboarding de clientes en 8 minutos.</strong> Registro → verificación de identidad → firma digital → acceso al producto, todo automatizado. Lo que antes tomaba 3 días ahora ocurre en una sola sesión.
+          <p class="sub">Abandono durante onboarding: de 23% a 4%</p>
+        </div>
+      </div>
+      <div class="vs-mid">VS</div>
+      <div class="vs-col">
+        <div class="vs-head epi"><span>🌊</span><span class="hname">Epimeteo Corp.</span></div>
+        <div class="vs-item epi">
+          <span class="vs-icon">✉️</span>
+          <strong>Email marketing manual mensual.</strong> Un colaborador dedica 2 días completos a escribir, segmentar y enviar lo que un sistema automatizado haría en 4 minutos. La campaña llega cuando el momento ya pasó.
+          <p class="sub">2 días/mes de trabajo equivalente = 24 días/año</p>
+        </div>
+        <div class="vs-item epi">
+          <span class="vs-icon">📞</span>
+          <strong>Pedidos por teléfono al proveedor.</strong> Si falta stock, alguien llama. Si no contesta, espera. Si hay quiebre, el cliente ya se fue a la competencia. El proceso depende enteramente de la disponibilidad humana.
+          <p class="sub">Tiempo de respuesta promedio: 4-6 horas laborales</p>
+        </div>
+        <div class="vs-item epi">
+          <span class="vs-icon">🐢</span>
+          <strong>Onboarding de 5-7 días hábiles.</strong> Cada nuevo cliente espera que alguien "procese su solicitud." El proceso involucra 4 personas diferentes y 7 pasos manuales. El 23% abandona antes de completarlo.
+          <p class="sub">Costo por onboarding manual: 8x mayor que el automatizado</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTOMATIZACIÓN: CASOS REALES -->
+<section id="auto-casos" style="background:var(--bg);">
+  <div class="container">
+    <p class="s-label fi">Casos empresariales reales</p>
+    <h2 class="s-title fi d1">Cómo la automatización con IA<br>redefine operaciones globales</h2>
+
+    <!-- Amazon -->
+    <div class="case-card fi d2">
+      <div class="case-header">
+        <div class="case-logo" style="background:#FF9900;color:#131921;font-size:22px;">📦</div>
+        <div><div class="case-title">Amazon</div><div class="case-sub">E-commerce &amp; Logística · 1.5M empleados · Ingresos $575B anuales</div></div>
+      </div>
+      <p class="case-body">Amazon procesa más de <strong>10 millones de pedidos diarios</strong> con automatización de extremo a extremo. Sus centros de distribución combinan robots físicos (Kiva/Proteus) con software de automatización para mover, clasificar y empacar productos. El sistema de precios dinámico ajusta automáticamente los precios de <strong>más de 150 millones de productos</strong> hasta 2.5 millones de veces al día en respuesta a demanda, competencia e inventario. Ningún humano interviene en estos ajustes: el algoritmo aprende qué precio maximiza la conversión en cada contexto.</p>
+      <div class="case-metrics">
+        <div class="metric"><div class="metric-val">-40%</div><div class="metric-lbl">Tiempo de preparación de pedidos vs proceso manual</div></div>
+        <div class="metric"><div class="metric-val">2.5M</div><div class="metric-lbl">Ajustes de precio automatizados por día</div></div>
+        <div class="metric"><div class="metric-val">750K+</div><div class="metric-lbl">Robots operando en centros de distribución globales</div></div>
+      </div>
+      <p class="cite">— Amazon Annual Report 2023 / MIT Technology Review, "Amazon's Robots", 2023</p>
+    </div>
+
+    <!-- Coca-Cola -->
+    <div class="case-card fi d3">
+      <div class="case-header">
+        <div class="case-logo" style="background:#F40009;color:white;font-size:22px;">🥤</div>
+        <div><div class="case-title">Coca-Cola Company</div><div class="case-sub">Bebidas · 200+ países · 30M puntos de venta globales</div></div>
+      </div>
+      <p class="case-body">Coca-Cola automatizó su proceso de <strong>gestión de equipos de refrigeración</strong> con IA predictiva. Sus 14 millones de equipos en el mundo envían datos en tiempo real a un sistema central que detecta cuándo un equipo necesita mantenimiento <em>antes</em> de que falle, optimiza la temperatura según el clima local y genera automáticamente las órdenes de trabajo para técnicos. Además, automatizó el análisis de imágenes de puntos de venta: sus socios envían fotos de los estantes y la IA detecta automáticamente problemas de exhibición, faltantes de producto y oportunidades de mejora, sin revisión humana.</p>
+      <div class="case-metrics">
+        <div class="metric"><div class="metric-val">-20%</div><div class="metric-lbl">Costos de mantenimiento de equipos con IA predictiva</div></div>
+        <div class="metric"><div class="metric-val">14M</div><div class="metric-lbl">Equipos monitoreados en tiempo real con IA</div></div>
+        <div class="metric"><div class="metric-val">85%</div><div class="metric-lbl">Precisión en detección automática de problemas de exhibición</div></div>
+      </div>
+      <p class="cite">— Coca-Cola Company Technology Report 2023 / Forbes, "How Coca-Cola Uses AI", 2023</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 class="fi" style="font-family:'Montserrat',sans-serif;font-size:18px;margin-bottom:20px;">Procesos automatizables en cualquier empresa</h3>
+    <div class="steps fi d1">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-title">Comunicaciones</div>
+        <div class="step-body">Emails, notificaciones, seguimientos, recordatorios. Flujos completos activados por comportamiento del usuario.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-title">Documentos</div>
+        <div class="step-body">Contratos, facturas, reportes, propuestas. Generación y envío automático según datos del sistema.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-title">Inventario</div>
+        <div class="step-body">Pedidos, alertas, ajustes de precios, transferencias entre almacenes basadas en reglas de negocio.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-title">Onboarding</div>
+        <div class="step-body">Alta de clientes, verificación de identidad, configuración de cuentas y acceso a servicios sin fricción.</div>
+      </div>
+    </div>
+
+    <div class="meta-box amber fi d2" style="margin-top:8px;">
+      <p class="meta-label">💡 La Reflexión de Prometeo</p>
+      <p class="meta-text">"No se trata de tener menos personas. Se trata de que cada persona valga más." — Cuando Prometeo automatizó, su equipo de soporte pasó de resolver tickets repetitivos a diseñar experiencias que ninguna máquina puede replicar: empatía genuina, creatividad estratégica, relaciones de confianza.</p>
+      <p class="cite">— Principio respaldado por: MIT Sloan Management Review, "Collaborative Intelligence: Humans and AI Are Joining Forces", 2018</p>
+    </div>
+
+    <table class="comp-table fi d3">
+      <thead>
+        <tr>
+          <th>Proceso</th>
+          <th class="pro-th">🔥 Prometeo (Automatizado)</th>
+          <th class="epi-th">🌊 Epimeteo (Manual)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Facturas por hora</td><td class="t-good">800 (RPA + IA)</td><td class="t-bad">12 (analista humano)</td></tr>
+        <tr><td>Onboarding nuevo cliente</td><td class="t-good">8 minutos</td><td class="t-bad">3-7 días hábiles</td></tr>
+        <tr><td>Seguimiento post-venta</td><td class="t-good">Automático 72h</td><td class="t-bad">Cuando "hay tiempo"</td></tr>
+        <tr><td>Reporte semanal</td><td class="t-good">Generado a las 7am automático</td><td class="t-bad">Lunes a las 11am si no hay urgencias</td></tr>
+        <tr><td>Alerta de cliente en riesgo</td><td class="t-good">Inmediata (IA detecta señales)</td><td class="t-bad">Cuando ya se fue (baja en facturación)</td></tr>
+      </tbody>
+    </table>
+    <p class="cite fi">— Deloitte "Automation with Intelligence" 2023 / UiPath Global Automation Survey 2024</p>
+  </div>
+</section>
+
+<section style="background:linear-gradient(160deg,#F0F9FF 0%,#E0F2FE 40%,#FAF9F6 100%);padding:72px 40px;">
+  <div class="container">
+    <p class="s-label fi">Guía Práctica</p>
+    <h2 class="s-title fi" style="margin-bottom:8px;">Tips IA para tu Negocio</h2>
+    <p class="fi" style="font-family:'Open Sans',sans-serif;font-size:17px;color:var(--text2);margin-bottom:36px;">Aplica lo aprendido en este módulo. Cada consejo está diseñado para implementarse en menos de 30 días.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;" class="fi d1">
+      <!-- DATA ANALYSIS TIPS -->
+      <div style="background:#fff;border-radius:16px;padding:28px;border:1px solid var(--border);box-shadow:var(--shadow);">
+        <p style="font-family:'Poppins',sans-serif;font-weight:700;font-size:11px;letter-spacing:3px;color:var(--pro);text-transform:uppercase;margin-bottom:16px;">📊 Pilar I · Data Analysis</p>
+        <h3 style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:20px;color:var(--text);margin-bottom:16px;">Hoja de Ruta: Tu Primer Proyecto de Datos</h3>
+        <div class="tip-ia">
+          <p class="tip-title">⚡ Quick Start — 4 Semanas</p>
+          <ul>
+            <li><strong>Semana 1:</strong> Audita tus fuentes de datos existentes (CRM, ERP, Excel dispersos). Identifica cuál genera más valor.</li>
+            <li><strong>Semana 2:</strong> Define 1 pregunta de negocio crítica. Ejemplo: "¿Por qué pierdo clientes en el mes 3?"</li>
+            <li><strong>Semana 3:</strong> Conecta los datos relevantes y crea un dashboard básico (Power BI, Looker Studio o Tableau).</li>
+            <li><strong>Semana 4:</strong> Comparte el insight con tu equipo y toma 1 decisión basada en los datos.</li>
+          </ul>
+        </div>
+        <div class="dato-clave">
+          <p class="dato-label">🎯 Criterio de Priorización de Datasets</p>
+          <p>Prioriza los datos con mayor <strong>frecuencia de uso × impacto económico</strong>. Si un dataset alimenta 3+ decisiones mensuales y mueve &gt;$10K, empieza ahí. Evita proyectos de "big data" genéricos al inicio.</p>
+        </div>
+        <p style="font-family:'Open Sans',sans-serif;font-size:14px;color:var(--muted);margin-top:12px;"><strong>Herramientas recomendadas:</strong> Google Looker Studio (gratis), Power BI Desktop, Tableau Public</p>
+      </div>
+
+      <!-- AUTOMATIZACIÓN TIPS -->
+      <div style="background:#fff;border-radius:16px;padding:28px;border:1px solid var(--border);box-shadow:var(--shadow);">
+        <p style="font-family:'Poppins',sans-serif;font-weight:700;font-size:11px;letter-spacing:3px;color:#059669;text-transform:uppercase;margin-bottom:16px;">⚙️ Pilar II · Automatización</p>
+        <h3 style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:20px;color:var(--text);margin-bottom:16px;">Matriz de Evaluación de Procesos</h3>
+        <div class="tip-ia">
+          <p class="tip-title">✅ La Regla del Triple Test</p>
+          <ul>
+            <li><strong>¿Es idéntico cada vez?</strong> Si el proceso varía según criterio humano, no automatices aún.</li>
+            <li><strong>¿Se basa en reglas claras?</strong> "Si X entonces Y" — si puedes escribirlo, puedes automatizarlo.</li>
+            <li><strong>¿Es digital en su ejecución?</strong> Datos que entran y salen de sistemas. Si requiere papel o llamadas, RPA primero.</li>
+          </ul>
+        </div>
+        <div class="dato-clave">
+          <p class="dato-label">📋 Los 5 procesos más automatizables en tu empresa</p>
+          <p>Facturación y cobranza · Onboarding de clientes · Reportes periódicos · Seguimiento post-venta · Alertas de stock/inventario. <strong>Empezar por el que consume más tiempo manual repetitivo.</strong></p>
+        </div>
+        <p style="font-family:'Open Sans',sans-serif;font-size:14px;color:var(--muted);margin-top:12px;"><strong>Herramientas recomendadas:</strong> Zapier, Make (Integromat), n8n (open-source)</p>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(135deg,var(--pro-l),#FFF7ED);border-radius:16px;padding:24px 28px;margin-top:28px;border-left:4px solid var(--pro);" class="fi d2">
+      <p style="font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;color:var(--pro-d);letter-spacing:1px;margin-bottom:8px;">🔥 REGLA DE PROMETEO</p>
+      <p style="font-family:'Open Sans',sans-serif;font-size:16px;color:var(--text2);line-height:1.75;"><strong>"Automatiza primero lo que ya funciona bien.</strong> Un proceso caótico automatizado es caos a escala. Optimiza, documenta y luego automatiza. Así opera Prometeo: con estrategia, no con urgencia."</p>
+    </div>
+  </div>
+</section>
+
+<div class="part-nav">
+  <a href="prometeo-parte1.html">← Parte 1: Personajes &amp; Pilares</a>
+  <span class="center">PARTE 2 DE 4 · XPROF IA</span>
+  <a href="prometeo-parte3.html">Parte 3: RPA &amp; Agentes →</a>
+</div>
+<footer><p>© 2026 XPROF Technology and Innovation</p></footer>
+
+<script>
+const pb=document.getElementById('pbar');
+window.addEventListener('scroll',()=>{pb.style.width=(window.scrollY/(document.body.scrollHeight-window.innerHeight)*100)+'%';});
+const secs=['data-acto','data-casos','auto-acto','auto-casos'];
+const dots=document.querySelectorAll('.nav-dot');
+dots.forEach((d,i)=>d.addEventListener('click',()=>document.getElementById(secs[i])?.scrollIntoView({behavior:'smooth'})));
+function updDots(){const m=window.innerHeight/2;let a=0;secs.forEach((id,i)=>{const r=document.getElementById(id)?.getBoundingClientRect();if(r&&r.top<=m)a=i;});dots.forEach((d,i)=>d.classList.toggle('active',i===a));}
+window.addEventListener('scroll',updDots);updDots();
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('v');e.target.querySelectorAll('.stat-fill').forEach(f=>{f.style.animation='none';f.offsetHeight;f.style.animation='grow 1.5s ease forwards';});}}),{threshold:.12});
+document.querySelectorAll('.fi').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

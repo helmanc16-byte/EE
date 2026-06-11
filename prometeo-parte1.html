@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prometeo vs Epimeteo · Parte 1 — El Fuego de la IA</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Poppins:wght@400;500;600;700&family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
+:root{
+  --bg:#FAF9F6;--bg2:#F2EDE4;--bg3:#EDE8DE;
+  --white:#FFFFFF;--surface:#FFFFFF;
+  --border:#E5E0D8;--border2:#D6CFC4;
+  --text:#111827;--text2:#1F2937;--muted:#4B5563;
+  --pro:#C2600A;--pro-l:#FEF3C7;--pro-d:#92400E;
+  --epi:#0369A1;--epi-l:#E0F2FE;--epi-d:#075985;
+  --fire:#F59E0B;--ember:#DC2626;
+  --purple:#7C3AED;--green:#059669;--orange:#EA580C;--blue:#2563EB;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
+  --shadow-lg:0 4px 6px rgba(0,0,0,.07),0 12px 40px rgba(0,0,0,.1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Open Sans',sans-serif;font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;}
+
+/* PROGRESS */
+#pbar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--ember),var(--fire));width:0;z-index:1000;box-shadow:0 0 6px rgba(245,158,11,.5);}
+
+/* NAV */
+nav{position:fixed;top:3px;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:11px 32px;background:rgba(250,249,246,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);z-index:999;}
+.nav-brand{font-family:'Montserrat',sans-serif;font-size:12px;color:var(--pro);letter-spacing:3px;font-weight:700;}
+.nav-dots{display:flex;gap:7px;}
+.nav-dot{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--border2);cursor:pointer;transition:all .25s;}
+.nav-dot.active{background:var(--pro);border-color:var(--pro);box-shadow:0 0 6px rgba(194,96,10,.4);}
+.nav-parts{display:flex;gap:6px;}
+.part-link{font-size:11px;padding:5px 12px;border-radius:20px;border:1px solid var(--border2);color:var(--muted);text-decoration:none;transition:all .2s;font-weight:500;}
+.part-link:hover{border-color:var(--pro);color:var(--pro);}
+.part-link.current{background:var(--pro);color:#fff;border-color:var(--pro);}
+
+/* SECTIONS */
+section{min-height:100vh;padding:60px 40px 60px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;}
+.container{max-width:1080px;margin:0 auto;width:100%;}
+
+/* HERO */
+#hero{background:linear-gradient(155deg,#FAF9F6 0%,#F5EDD8 40%,#F0E8D0 100%);text-align:center;}
+.hero-eye{font-family:'Montserrat',sans-serif;font-size:11px;letter-spacing:5px;color:var(--pro);text-transform:uppercase;margin-bottom:20px;opacity:.85;}
+.hero-title{font-family:'Montserrat',sans-serif;font-size:clamp(44px,7vw,84px);font-weight:900;line-height:1.05;color:var(--text);margin-bottom:12px;}
+.hero-title span{background:linear-gradient(135deg,var(--ember),var(--pro));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-size:clamp(16px,2.2vw,20px);color:var(--text2);max-width:600px;margin:0 auto 36px;line-height:1.65;}
+.flame-wrap{display:flex;justify-content:center;margin:24px 0;}
+.flame-svg{animation:flicker 2.2s ease-in-out infinite alternate;filter:drop-shadow(0 4px 12px rgba(245,158,11,.35));}
+@keyframes flicker{0%{transform:scaleX(1) scaleY(1);}60%{transform:scaleX(.94) scaleY(1.05);}100%{transform:scaleX(1.04) scaleY(.97);}}
+.scroll-cue{margin-top:44px;font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:7px;animation:bob 2s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(7px);}}
+
+/* CHIPS */
+.chip{display:inline-block;padding:4px 13px;border-radius:20px;font-size:12px;font-weight:600;margin:3px;}
+.chip-amber{background:var(--pro-l);color:var(--pro-d);border:1px solid rgba(194,96,10,.2);}
+.chip-blue{background:var(--epi-l);color:var(--epi-d);border:1px solid rgba(3,105,161,.2);}
+.chip-purple{background:#EDE9FE;color:#5B21B6;border:1px solid rgba(124,58,237,.2);}
+.chip-green{background:#D1FAE5;color:#065F46;border:1px solid rgba(5,150,105,.2);}
+.chip-orange{background:#FFEDD5;color:#9A3412;border:1px solid rgba(234,88,12,.2);}
+
+/* SECTION LABELS */
+.s-label{font-family:'Montserrat',sans-serif;font-size:10px;letter-spacing:5px;color:var(--pro);text-transform:uppercase;margin-bottom:14px;opacity:.8;}
+.s-title{font-family:'Montserrat',sans-serif;font-size:clamp(28px,4vw,46px);font-weight:700;line-height:1.15;margin-bottom:18px;color:var(--text);}
+.s-body{font-size:17px;line-height:1.78;color:var(--text2);max-width:760px;}
+
+/* DIVIDER */
+.divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);margin:52px 0;}
+
+/* CHARACTER CARDS */
+#personajes{background:linear-gradient(160deg,#FAF9F6 0%,#F7F1E8 100%);}
+.char-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:40px;}
+@media(max-width:768px){.char-grid{grid-template-columns:1fr;}.nav-parts{display:none;}section{padding:80px 20px 50px;}}
+.char-card{border-radius:20px;padding:38px 34px;background:var(--white);box-shadow:var(--shadow);border:1px solid var(--border);transition:all .3s;cursor:default;position:relative;overflow:hidden;}
+.char-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px);}
+.char-card.pro-card{border-top:4px solid var(--pro);}
+.char-card.epi-card{border-top:4px solid var(--epi);}
+.char-icon{font-size:52px;margin-bottom:18px;display:block;}
+.char-name{font-family:'Montserrat',sans-serif;font-size:26px;font-weight:700;margin-bottom:5px;}
+.pro-card .char-name{color:var(--pro);}
+.epi-card .char-name{color:var(--epi);}
+.char-myth{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:18px;}
+.char-desc{font-size:15px;line-height:1.72;color:var(--text2);}
+.char-tag{display:inline-block;margin-top:18px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;letter-spacing:.5px;}
+.pro-card .char-tag{background:var(--pro-l);color:var(--pro-d);}
+.epi-card .char-tag{background:var(--epi-l);color:var(--epi-d);}
+.brand-row{margin-top:18px;padding-top:16px;border-top:1px solid var(--border);}
+.brand-label{font-size:11px;color:var(--muted);margin-bottom:7px;}
+
+/* METAPHOR BOX */
+.meta-box{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:1px solid rgba(194,96,10,.2);border-left:4px solid var(--pro);border-radius:0 14px 14px 0;padding:24px 28px;margin:32px 0;position:relative;}
+.meta-box.blue{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-color:rgba(3,105,161,.2);border-left-color:var(--epi);}
+.meta-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--pro);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.meta-box.blue .meta-label{color:var(--epi);}
+.meta-text{font-size:16px;line-height:1.72;color:var(--text2);font-style:italic;}
+
+/* WORLD / TIMELINE */
+#mundo{background:linear-gradient(160deg,#F7F4EE 0%,#F0EBE0 100%);}
+.timeline{margin:36px 0;position:relative;}
+.timeline::before{content:'';position:absolute;left:26px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--pro),transparent);opacity:.25;}
+.tl-item{display:flex;gap:22px;margin-bottom:26px;}
+.tl-dot{width:50px;height:50px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px;position:relative;z-index:1;}
+.tl-dot.fire{background:var(--pro-l);border:2px solid rgba(194,96,10,.35);}
+.tl-dot.ice{background:var(--epi-l);border:2px solid rgba(3,105,161,.3);}
+.tl-title{font-weight:600;font-size:15px;margin-bottom:4px;color:var(--text);}
+.tl-body{font-size:14px;color:var(--muted);line-height:1.62;}
+
+/* STAT ROW */
+.stat-row{margin:18px 0;}
+.stat-label{font-size:13px;color:var(--text2);margin-bottom:6px;display:flex;justify-content:space-between;}
+.stat-label strong{color:var(--pro);}
+.stat-track{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+.stat-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--ember),var(--fire));animation:grow 1.5s ease forwards;width:0;}
+@keyframes grow{to{width:var(--w);}}
+
+/* PILLAR CARDS */
+#pilares{background:var(--bg);}
+.pillar-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:36px;}
+@media(max-width:768px){.pillar-grid{grid-template-columns:1fr;}}
+.pillar-card{background:var(--white);border-radius:18px;padding:30px;border:1px solid var(--border);box-shadow:var(--shadow);cursor:pointer;transition:all .3s;position:relative;overflow:hidden;}
+.pillar-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;}
+.pillar-card.data::before{background:linear-gradient(90deg,#7C3AED,#A855F7);}
+.pillar-card.auto::before{background:linear-gradient(90deg,#059669,#10B981);}
+.pillar-card.rpa::before{background:linear-gradient(90deg,#DC2626,#F97316);}
+.pillar-card.agents::before{background:linear-gradient(90deg,#2563EB,#6366F1);}
+.pillar-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px);}
+.pillar-icon{font-size:36px;margin-bottom:14px;display:block;}
+.pillar-title{font-family:'Montserrat',sans-serif;font-size:19px;font-weight:700;margin-bottom:9px;}
+.pillar-card.data .pillar-title{color:#7C3AED;}
+.pillar-card.auto .pillar-title{color:#059669;}
+.pillar-card.rpa .pillar-title{color:#DC2626;}
+.pillar-card.agents .pillar-title{color:#2563EB;}
+.pillar-desc{font-size:14px;line-height:1.65;color:var(--muted);margin-bottom:16px;}
+.pillar-expand{max-height:0;overflow:hidden;transition:max-height .5s ease,opacity .4s;opacity:0;}
+.pillar-card.open .pillar-expand{max-height:400px;opacity:1;}
+.expand-inner{border-top:1px solid var(--border);padding-top:18px;margin-top:14px;}
+.expand-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;}
+.exp-cell{padding:14px;border-radius:10px;font-size:13px;line-height:1.55;}
+.exp-cell.pro{background:var(--pro-l);border:1px solid rgba(194,96,10,.15);}
+.exp-cell.epi{background:var(--epi-l);border:1px solid rgba(3,105,161,.15);}
+.exp-cell .lbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:6px;display:block;}
+.exp-cell.pro .lbl{color:var(--pro);}
+.exp-cell.epi .lbl{color:var(--epi);}
+.exp-cell .body{color:var(--text2);}
+.toggle-btn{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);cursor:pointer;background:none;border:none;font-family:'Inter',sans-serif;padding:0;transition:color .2s;}
+.toggle-btn:hover{color:var(--text);}
+.tarrow{transition:transform .3s;display:inline-block;}
+.pillar-card.open .tarrow{transform:rotate(90deg);}
+
+/* CITATION */
+.cite{font-size:12px;color:var(--muted);margin-top:10px;font-style:italic;border-left:2px solid var(--border2);padding-left:10px;}
+
+/* PART NAV BOTTOM */
+.part-nav{display:flex;justify-content:space-between;align-items:center;padding:28px 40px;border-top:1px solid var(--border);background:var(--white);}
+.part-nav a{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--pro);text-decoration:none;padding:10px 22px;border-radius:24px;border:1.5px solid rgba(194,96,10,.3);transition:all .2s;}
+.part-nav a:hover{background:var(--pro);color:#fff;border-color:var(--pro);}
+.part-nav .center{font-family:'Montserrat',sans-serif;font-size:12px;color:var(--muted);letter-spacing:2px;}
+
+/* FADE */
+.fi{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease;}
+.fi.v{opacity:1;transform:translateY(0);}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}.d4{transition-delay:.4s;}
+
+footer{text-align:center;padding:28px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);}
+
+/* ── TYPOGRAPHY LAYER ── */
+.nav-brand,.s-label,.meta-label,.act-badge,.char-myth,.case-sub,.brand-label,.hero-eye,
+.char-tag,.vs-head .hname,.tl-title,.step-title,.rpa-title,.agent-title,.toggle-btn,
+.fell-name,.reflex-title,.part-nav .center,.exp-cell .lbl,.pillar-toggle,.toggle-btn,
+.metric-lbl,.rpa-result,.agent-result,.quote-author,.cite,.stat-label{font-family:'Poppins',sans-serif;}
+.s-title,.hero-title,.char-name,.outcome-title,.cta-title,.pillar-title,.case-title,
+.act-num,.quote-text,.reflex-title,.eval-q,.outcome-verdict strong{font-family:'Montserrat',sans-serif;letter-spacing:-.25px;}
+.s-body,.char-desc,.vs-item,.case-body,.meta-text,.tl-body,.step-body,
+.pillar-desc,.exp-cell .body,.out-item .body,.reflex-text,.reflex-q,.comp-table td,
+.eval-result{font-family:'Open Sans',sans-serif;color:var(--text2);line-height:1.82;}
+.s-title{font-weight:800;}.hero-title{font-weight:900;}
+.s-body{font-size:17px;}.meta-text{font-size:15.5px;}
+strong{color:var(--text);font-weight:700;}
+/* Tip IA box */
+.tip-ia{background:#EFF6FF;border-radius:16px;padding:26px 30px;border:1px solid rgba(37,99,235,.18);margin-top:32px;}
+.tip-ia-title{font-family:'Poppins',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#2563EB;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.tip-ia-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:768px){.tip-ia-grid{grid-template-columns:1fr;}}
+.tip-ia-card{background:#fff;border-radius:10px;padding:16px;border:1px solid rgba(37,99,235,.12);}
+.tip-ia-card h4{font-family:'Poppins',sans-serif;font-weight:700;color:#1E3A8A;font-size:13px;margin-bottom:6px;}
+.tip-ia-card p{font-family:'Open Sans',sans-serif;font-size:13px;color:#374151;line-height:1.7;}
+/* Dato clave */
+.dato-clave{display:flex;align-items:flex-start;gap:14px;background:#FFFBEB;border:1px solid rgba(194,96,10,.2);border-radius:12px;padding:16px 20px;margin:12px 0;}
+.dato-clave .dk-icon{font-size:22px;flex-shrink:0;margin-top:1px;}
+.dato-clave .dk-text{font-family:'Open Sans',sans-serif;font-size:13px;color:#1F2937;line-height:1.7;}
+.dato-clave .dk-text strong{color:var(--pro);}
+</style>
+</head>
+<body>
+<div id="pbar"></div>
+
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <p class="hero-eye">Lección I · IA &amp; Negocios</p>
+    <div class="flame-wrap">
+      <svg class="flame-svg" width="68" height="90" viewBox="0 0 68 90" fill="none">
+        <path d="M34 8C26 18,13 28,17 46c2 7,9 11,7 18C22 72,13 74,17 84c3 8,17 8,17 8s14 0,17-8c4-10-5-12-7-20-2-7,5-11,7-18C55 28,42 18,34 8Z" fill="url(#f1)"/>
+        <path d="M34 26C29 33,22 39,24 49c2 7,9 9,9 16,0 7-7 10-4 17,2 4,5 7,5 7s3-3,5-7c3-7-4-10-4-17,0-7,7-9,9-16C46 39,39 33,34 26Z" fill="url(#f2)"/>
+        <defs>
+          <linearGradient id="f1" x1="34" y1="8" x2="34" y2="92" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#DC2626"/><stop offset="55%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#FDE68A" stop-opacity=".4"/>
+          </linearGradient>
+          <linearGradient id="f2" x1="34" y1="26" x2="34" y2="92" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#F97316"/><stop offset="100%" stop-color="#FCD34D" stop-opacity=".5"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+    <h1 class="hero-title"><span>Prometeo</span> vs <span>Epimeteo</span></h1>
+    <p class="hero-sub">Dos hermanos de la mitología griega que hoy dirigen empresas. La brecha entre quien adopta la Inteligencia Artificial ahora y quien la pospone es, literalmente, el futuro del negocio.</p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+      <span class="chip chip-purple">Data Analysis</span>
+      <span class="chip chip-green">Automatización</span>
+      <span class="chip chip-orange">RPA</span>
+      <span class="chip chip-blue">Agentes IA</span>
+    </div>
+    <div class="scroll-cue">
+      <span>Desplázate para comenzar</span>
+      <svg width="14" height="20" viewBox="0 0 14 20" fill="none"><path d="M7 0v14M2 9l5 5 5-5" stroke="#C2600A" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+  </div>
+</section>
+
+<!-- PERSONAJES -->
+<section id="personajes">
+  <div class="container">
+    <p class="s-label fi">Los protagonistas</p>
+    <h2 class="s-title fi d1">Dos hermanos. Dos filosofías.<br>Un solo mercado.</h2>
+    <p class="s-body fi d2">En la mitología griega, Prometeo y Epimeteo eran titanes encargados de equipar a todas las criaturas del mundo. Sus nombres revelan todo: <strong>Prometeo</strong> ("el que piensa antes") y <strong>Epimeteo</strong> ("el que piensa después"). Hoy viven en cada sala de juntas del planeta.</p>
+
+    <div class="char-grid">
+      <div class="char-card pro-card fi d2">
+        <span class="char-icon">🔥</span>
+        <h3 class="char-name">Prometeo</h3>
+        <p class="char-myth">El Previsor · El Portador del Fuego</p>
+        <p class="char-desc">Robó el fuego sagrado del Olimpo y lo entregó a la humanidad <em>antes</em> de que la necesitara. No esperó a que llegara el frío para buscar calor. Asumió el riesgo, anticipó la necesidad y actuó con convicción incluso ante la resistencia de los dioses.<br><br>
+        <strong>En el mundo empresarial:</strong> Es el CEO que hoy despliega IA en sus operaciones mientras su competencia debate si "la IA es una moda". Experimenta, aprende y adapta en ciclos de semanas, no de años.</p>
+        <span class="char-tag">⚡ Adopta · Aprende · Escala</span>
+        <div class="brand-row">
+          <p class="brand-label">Empresas con mentalidad Prometeo:</p>
+          <span class="chip chip-amber">Amazon</span><span class="chip chip-amber">Netflix</span><span class="chip chip-amber">Tesla</span><span class="chip chip-amber">Mercado Libre</span>
+        </div>
+      </div>
+
+      <div class="char-card epi-card fi d3">
+        <span class="char-icon">🌊</span>
+        <h3 class="char-name">Epimeteo</h3>
+        <p class="char-myth">El que actúa después · El que lamentó</p>
+        <p class="char-desc">Recibió a Pandora sin evaluar las consecuencias. Gastó todos los atributos en otras criaturas y dejó al humano desprotegido hasta que fue tarde. Siempre reaccionaba <em>después</em> de que el daño ya era visible.<br><br>
+        <strong>En el mundo empresarial:</strong> Es el gerente que dice "esperemos a que la IA madure más", mientras su competencia ya la usa para reducir costos, responder más rápido y capturar su mercado.</p>
+        <span class="char-tag">⏳ Posterga · Reacciona tarde · Recupera</span>
+        <div class="brand-row">
+          <p class="brand-label">Empresas que esperaron demasiado:</p>
+          <span class="chip chip-blue">Blockbuster</span><span class="chip chip-blue">Kodak</span><span class="chip chip-blue">Nokia</span><span class="chip chip-blue">Sears</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="meta-box fi d4" style="margin-top:44px;">
+      <p class="meta-label">🌊 La Analogía del Océano</p>
+      <p class="meta-text">Imaginemos el mercado actual como un océano en plena tormenta tecnológica. Prometeo ya construyó su embarcación equipada con IA: navega más rápido, predice tormentas con datos en tiempo real, automatiza las operaciones y envía agentes inteligentes como exploradores de nuevas rutas. Epimeteo sigue en el muelle, convencido de que el mar puede esperar, mientras la marea continúa subiendo.</p>
+    </div>
+
+    <div class="meta-box blue fi" style="margin-top:20px;">
+      <p class="meta-label">📊 El Contexto Global</p>
+      <p class="meta-text">Según McKinsey Global Institute (2023), las empresas que adoptan IA de forma integral reportan un incremento de entre 20% y 30% en rentabilidad operativa en los primeros tres años. El 72% de los líderes empresariales que aún no adoptaron IA mencionan "falta de urgencia" como principal razón, no falta de recursos.</p>
+      <p class="cite">— McKinsey Global Institute, "The state of AI in 2023: Generative AI's breakout year"</p>
+    </div>
+  </div>
+</section>
+
+<!-- MUNDO HOY -->
+<section id="mundo">
+  <div class="container">
+    <p class="s-label fi">El contexto real</p>
+    <h2 class="s-title fi d1">El mismo año.<br>Dos realidades distintas.</h2>
+    <p class="s-body fi d2">Prometeo y Epimeteo no operan en mercados diferentes. Tienen los mismos clientes potenciales, los mismos competidores globales, el mismo acceso a tecnología. La diferencia no es de recursos: es de decisión.</p>
+
+    <div class="meta-box fi d3">
+      <p class="meta-label">🔥 Dato que cambia todo</p>
+      <p class="meta-text">Las empresas con IA integrada en sus procesos principales responden a cambios de mercado 4.5 veces más rápido que sus competidores sin IA. En un mercado donde la velocidad es ventaja competitiva, este gap se amplía cada mes.</p>
+      <p class="cite">— Harvard Business Review, "The Business Case for AI", 2023</p>
+    </div>
+
+    <div class="divider"></div>
+    <h3 class="fi" style="font-family:'Montserrat',sans-serif;font-size:20px;margin-bottom:6px;">Un año: 12 meses de decisiones divergentes</h3>
+    <p class="fi d1" style="font-size:14px;color:var(--muted);margin-bottom:28px;">Cómo el mismo período de tiempo produce resultados radicalmente distintos.</p>
+
+    <div class="timeline">
+      <div class="tl-item fi"><div class="tl-dot fire">🔥</div><div><p class="tl-title">Prometeo — Enero: Adopta Data Analysis</p><p class="tl-body">Implementa un modelo predictivo en ventas. En 6 semanas identifica patrones que antes tomaban meses de análisis manual. Amazon tardó 2 años en construir el suyo en 1998; hoy cualquier empresa puede tenerlo en semanas.</p></div></div>
+      <div class="tl-item fi d1"><div class="tl-dot ice">🌊</div><div><p class="tl-title">Epimeteo — Enero: "Ponlo en agenda"</p><p class="tl-body">Recibe el mismo reporte de TI recomendando explorar IA. Dice: "Pongámoslo en la agenda del próximo trimestre. Hay otras prioridades." El trimestre llega y se pospone de nuevo.</p></div></div>
+      <div class="tl-item fi d2"><div class="tl-dot fire">🔥</div><div><p class="tl-title">Prometeo — Abril: Automatización activa</p><p class="tl-body">40% de procesos administrativos automatizados. Su equipo trabaja en tareas de mayor valor. Klarna redujo su fuerza de atención al cliente de 700 a 85 personas usando IA, sin despidos masivos — redistribuyó al equipo en roles estratégicos.</p></div></div>
+      <div class="tl-item fi d3"><div class="tl-dot ice">🌊</div><div><p class="tl-title">Epimeteo — Abril: Primer comité IA</p><p class="tl-body">Convoca la primera reunión para "evaluar proveedores de IA". Sin decisión. Se pide un segundo informe comparativo para el siguiente trimestre. El proceso de decisión comienza a superar en duración al tiempo de implementación real.</p></div></div>
+      <div class="tl-item fi d4"><div class="tl-dot fire">🔥</div><div><p class="tl-title">Prometeo — Agosto: RPA + Agentes</p><p class="tl-body">Despliega robots de proceso para operaciones financieras y agentes de IA para atención al cliente. JP Morgan implementó su sistema COIN de RPA en 2017; hoy procesa en segundos lo que 360,000 horas de trabajo humano tardaban al año.</p></div></div>
+      <div class="tl-item fi"><div class="tl-dot ice">🌊</div><div><p class="tl-title">Epimeteo — Diciembre: Crisis y urgencia</p><p class="tl-body">Pierde dos clientes importantes ante un competidor "más ágil". Finalmente decide adoptar IA, contratar un consultor y empezar desde cero con 12 meses de retraso y el doble de presupuesto bajo presión.</p></div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px;" class="fi">
+      <div style="background:var(--white);border-radius:14px;padding:24px;border:1px solid var(--border);box-shadow:var(--shadow);text-align:center;">
+        <div style="font-size:36px;font-weight:800;color:var(--pro);font-family:'Montserrat',sans-serif;">4.5x</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:6px;line-height:1.5;">Velocidad de respuesta al mercado con IA vs sin IA</div>
+      </div>
+      <div style="background:var(--white);border-radius:14px;padding:24px;border:1px solid var(--border);box-shadow:var(--shadow);text-align:center;">
+        <div style="font-size:36px;font-weight:800;color:var(--pro);font-family:'Montserrat',sans-serif;">38%</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:6px;line-height:1.5;">Reducción promedio de costos operativos en empresas con IA integrada</div>
+      </div>
+      <div style="background:var(--white);border-radius:14px;padding:24px;border:1px solid var(--border);box-shadow:var(--shadow);text-align:center;">
+        <div style="font-size:36px;font-weight:800;color:var(--pro);font-family:'Montserrat',sans-serif;">2x</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:6px;line-height:1.5;">Costo de implementación cuando se adopta IA bajo presión vs en el momento oportuno</div>
+      </div>
+    </div>
+    <p class="cite fi" style="margin-top:12px;">— IBM Institute for Business Value, "AI-Ready Culture", 2023 / Gartner AI in Enterprise, 2024</p>
+  </div>
+</section>
+
+<!-- PILARES -->
+<section id="pilares">
+  <div class="container">
+    <p class="s-label fi">Los 4 pilares</p>
+    <h2 class="s-title fi d1">Las aplicaciones de IA que<br>transforman negocios hoy</h2>
+    <p class="s-body fi d2">Prometeo no adoptó "IA en general". Adoptó cuatro herramientas específicas que se potencian mutuamente. Cada una es un escalón. Juntas, son el sistema que define quién lidera el mercado en los próximos cinco años. <em>Haz clic en cada pilar para ver el caso real.</em></p>
+
+    <div class="pillar-grid">
+
+      <div class="pillar-card data fi" onclick="toggleP(this)">
+        <span class="pillar-icon">📊</span>
+        <h3 class="pillar-title">Data Analysis</h3>
+        <p class="pillar-desc">Convertir los datos de tu negocio en decisiones predictivas. No reportes del pasado — inteligencia sobre el futuro.</p>
+        <button class="toggle-btn"><span class="tarrow">▶</span><span class="ttxt">Ver caso real</span></button>
+        <div class="pillar-expand">
+          <div class="expand-inner">
+            <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">🔭 <em>Netflix genera el 80% de sus visualizaciones a partir de recomendaciones de su algoritmo de IA. Su sistema de análisis predictivo les ahorra $1,000 millones al año en retención de suscriptores.</em></p>
+            <div class="expand-row">
+              <div class="exp-cell pro"><span class="lbl">🔥 Prometeo</span><span class="body">Implementa dashboards IA que predicen demanda 30 días antes. Reduce sobrestock 25%. Identifica los 20% de clientes que generan el 80% del ingreso.</span></div>
+              <div class="exp-cell epi"><span class="lbl">🌊 Epimeteo</span><span class="body">Revisa reportes semanales en Excel. Se entera del sobrestock de diciembre cuando ya entró enero. Decide sobre el pasado, no el futuro.</span></div>
+            </div>
+            <p class="cite">— Netflix Technology Blog / McKinsey & Company, 2023</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="pillar-card auto fi d1" onclick="toggleP(this)">
+        <span class="pillar-icon">⚙️</span>
+        <h3 class="pillar-title">Automatización</h3>
+        <p class="pillar-desc">Liberar a las personas de tareas repetitivas para que hagan lo que solo los humanos pueden: pensar, crear y conectar.</p>
+        <button class="toggle-btn"><span class="tarrow">▶</span><span class="ttxt">Ver caso real</span></button>
+        <div class="pillar-expand">
+          <div class="expand-inner">
+            <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">🏭 <em>Amazon procesa más de 10 millones de pedidos al día con automatización de extremo a extremo. Su sistema de fulfillment automatizado reduce el tiempo de preparación de pedidos en un 40%.</em></p>
+            <div class="expand-row">
+              <div class="exp-cell pro"><span class="lbl">🔥 Prometeo</span><span class="body">Automatiza facturación, onboarding de clientes y seguimientos. Su equipo de 5 personas produce el trabajo que antes requería 12.</span></div>
+              <div class="exp-cell epi"><span class="lbl">🌊 Epimeteo</span><span class="body">"No podemos automatizar porque nuestros procesos son muy específicos." (Todos los procesos repetitivos, sin excepción, son automatizables.)</span></div>
+            </div>
+            <p class="cite">— Amazon Annual Report 2023 / MIT Sloan Management Review</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="pillar-card rpa fi d2" onclick="toggleP(this)">
+        <span class="pillar-icon">🤖</span>
+        <h3 class="pillar-title">RPA</h3>
+        <p class="pillar-desc">Robots de software que operan aplicaciones digitales como un humano — 24/7, sin errores, 100 veces más rápido.</p>
+        <button class="toggle-btn"><span class="tarrow">▶</span><span class="ttxt">Ver caso real</span></button>
+        <div class="pillar-expand">
+          <div class="expand-inner">
+            <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">🧬 <em>JP Morgan implementó COIN (Contract Intelligence), un sistema de RPA que analiza 12,000 contratos comerciales al año en segundos — trabajo que antes requería 360,000 horas humanas.</em></p>
+            <div class="expand-row">
+              <div class="exp-cell pro"><span class="lbl">🔥 Prometeo</span><span class="body">Sus robots procesan 800 facturas/hora, concilian cuentas al instante y responden solicitudes de nómina sin intervención humana. Opera 24/7 a costo fijo.</span></div>
+              <div class="exp-cell epi"><span class="lbl">🌊 Epimeteo</span><span class="body">Tiene 3 personas descargando reportes, copiándolos a planillas y enviándolos por correo cada día. "Ellos ya conocen el proceso."</span></div>
+            </div>
+            <p class="cite">— JP Morgan Chase Annual Report / Deloitte Global RPA Survey 2023</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="pillar-card agents fi d3" onclick="toggleP(this)">
+        <span class="pillar-icon">🧠</span>
+        <h3 class="pillar-title">Agentes IA</h3>
+        <p class="pillar-desc">Sistemas que piensan, planifican y ejecutan objetivos complejos de forma autónoma. El colaborador digital siempre activo.</p>
+        <button class="toggle-btn"><span class="tarrow">▶</span><span class="ttxt">Ver caso real</span></button>
+        <div class="pillar-expand">
+          <div class="expand-inner">
+            <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">🌟 <em>Klarna reemplazó a 700 agentes de atención al cliente con 85 agentes de IA en 2024. El tiempo promedio de resolución bajó de 11 minutos a 2 minutos. Satisfacción del cliente igual o superior al equipo humano anterior.</em></p>
+            <div class="expand-row">
+              <div class="exp-cell pro"><span class="lbl">🔥 Prometeo</span><span class="body">Agentes atienden clientes 24/7 en WhatsApp, generan propuestas en 15 min, monitorean competidores y presentan briefings diarios al equipo directivo.</span></div>
+              <div class="exp-cell epi"><span class="lbl">🌊 Epimeteo</span><span class="body">"Los chatbots son impersonales." — Basado en una mala experiencia con un bot de 2019. No sabe que los agentes actuales entienden contexto, aprenden y se adaptan.</span></div>
+            </div>
+            <p class="cite">— Klarna Press Release, Feb 2024 / Salesforce State of Service Report 2024</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="meta-box fi" style="margin-top:40px;">
+      <p class="meta-label">⚡ Los 4 pilares no son opcionales — son secuenciales</p>
+      <p class="meta-text">Data Analysis te dice qué pasa y qué va a pasar. Automatización elimina el trabajo manual que consume tiempo. RPA ejecuta procesos digitales a velocidad computacional. Agentes razonan y actúan de forma autónoma. Cada pilar multiplica el valor del anterior. Juntos, crean una ventaja competitiva prácticamente insuperable.</p>
+    </div>
+
+    <!-- TIP IA -->
+    <div class="tip-ia fi">
+      <p class="tip-ia-title">💡 Tips IA para negocios — ¿Por dónde empezar?</p>
+      <div class="tip-ia-grid">
+        <div class="tip-ia-card">
+          <h4>📊 Data Analysis — Semana 1</h4>
+          <p>Conecta tu fuente de datos de ventas a Power BI, Looker Studio o Tableau. Una semana de configuración te da visibilidad en tiempo real que hoy tardas días en ensamblar manualmente. El 78% de empresas que implementan BI con IA ven mejoras en decisiones en el primer mes.</p>
+        </div>
+        <div class="tip-ia-card">
+          <h4>⚙️ Automatización — Criterio simple</h4>
+          <p>¿Tu equipo hace la misma tarea de forma idéntica más de 3 veces por semana? Es candidato para automatizar. Herramientas como Zapier, Make.com o n8n permiten crear flujos sin programar. Costo de inicio: desde $0/mes con planes gratuitos.</p>
+        </div>
+        <div class="tip-ia-card">
+          <h4>🤖 RPA — El ROI más rápido</h4>
+          <p>El proceso ideal para empezar: conciliación bancaria, generación de reportes periódicos o transferencia de datos entre sistemas. El ROI promedio del RPA es positivo a los 9 meses. Plataformas accesibles: UiPath Community Edition (gratuita), Power Automate (incluida en Microsoft 365).</p>
+        </div>
+        <div class="tip-ia-card">
+          <h4>🧠 Agentes IA — Menor barrera de entrada</h4>
+          <p>El caso de uso de mayor adopción: agente para preguntas frecuentes y soporte de primer nivel. Plataformas como Intercom Fin, Zendesk AI o Botpress permiten lanzar en días. El agente debe manejar el 60%+ de consultas repetitivas para que el equipo humano se concentre en casos complejos.</p>
+        </div>
+      </div>
+      <div class="dato-clave" style="margin-top:14px;">
+        <span class="dk-icon">📌</span>
+        <span class="dk-text"><strong>Regla de Prometeo:</strong> No esperes tener todo perfectamente definido para empezar. Inicia con el pilar que resuelve el mayor dolor actual de tu negocio. Aprende. Itera. Los datos de McKinsey muestran que las empresas que empiezan con un piloto pequeño implementan 3x más rápido que las que intentan transformar todo a la vez.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="part-nav">
+  <a href="#hero" style="opacity:.4;pointer-events:none;">← Anterior</a>
+  <span class="center">PARTE 1 DE 4 · XPROF IA</span>
+  <a href="prometeo-parte2.html">Parte 2: Data &amp; Automatización →</a>
+</div>
+
+<footer>
+  <p>© 2026 XPROF Technology and Innovation</p>
+</footer>
+
+<script>
+const pb=document.getElementById('pbar');
+window.addEventListener('scroll',()=>{pb.style.width=(window.scrollY/(document.body.scrollHeight-window.innerHeight)*100)+'%';});
+const secs=['hero','personajes','mundo','pilares'];
+const dots=document.querySelectorAll('.nav-dot');
+dots.forEach((d,i)=>d.addEventListener('click',()=>document.getElementById(secs[i])?.scrollIntoView({behavior:'smooth'})));
+function updDots(){const m=window.innerHeight/2;let a=0;secs.forEach((id,i)=>{const r=document.getElementById(id)?.getBoundingClientRect();if(r&&r.top<=m)a=i;});dots.forEach((d,i)=>d.classList.toggle('active',i===a));}
+window.addEventListener('scroll',updDots);updDots();
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('v');e.target.querySelectorAll('.stat-fill').forEach(f=>{f.style.animation='none';f.offsetHeight;f.style.animation='grow 1.4s ease forwards';});}}),{threshold:.14});
+document.querySelectorAll('.fi').forEach(el=>obs.observe(el));
+function toggleP(c){const o=c.classList.contains('open');document.querySelectorAll('.pillar-card').forEach(x=>{x.classList.remove('open');const t=x.querySelector('.ttxt');if(t)t.textContent='Ver caso real';});if(!o){c.classList.add('open');const t=c.querySelector('.ttxt');if(t)t.textContent='Cerrar';}}
+</script>
+</body>
+</html>

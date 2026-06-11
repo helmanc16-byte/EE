@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prometeo vs Epimeteo · Parte 4 — Desenlace &amp; Reflexión</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Poppins:wght@400;500;600;700&family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
+:root{
+  --bg:#FAF9F6;--bg2:#F2EDE4;--bg3:#EDE8DE;
+  --white:#FFFFFF;--border:#E5E0D8;--border2:#D6CFC4;
+  --text:#111827;--text2:#1F2937;--muted:#4B5563;
+  --pro:#C2600A;--pro-l:#FEF3C7;--pro-d:#92400E;
+  --epi:#0369A1;--epi-l:#E0F2FE;--epi-d:#075985;
+  --fire:#F59E0B;--ember:#DC2626;
+  --green:#059669;--indigo:#4F46E5;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
+  --shadow-lg:0 4px 6px rgba(0,0,0,.07),0 12px 40px rgba(0,0,0,.1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Open Sans',sans-serif;font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;}
+#pbar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--ember),var(--fire));width:0;z-index:1000;}
+nav{position:fixed;top:3px;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:11px 32px;background:rgba(250,249,246,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);z-index:999;}
+.nav-brand{font-family:'Montserrat',sans-serif;font-size:12px;color:var(--pro);letter-spacing:3px;font-weight:700;}
+.nav-dots{display:flex;gap:7px;}
+.nav-dot{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--border2);cursor:pointer;transition:all .25s;}
+.nav-dot.active{background:var(--pro);border-color:var(--pro);}
+.nav-parts{display:flex;gap:6px;}
+.part-link{font-size:11px;padding:5px 12px;border-radius:20px;border:1px solid var(--border2);color:var(--muted);text-decoration:none;transition:all .2s;font-weight:500;}
+.part-link:hover{border-color:var(--pro);color:var(--pro);}
+.part-link.current{background:var(--pro);color:#fff;border-color:var(--pro);}
+section{min-height:100vh;padding:60px 40px 60px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;}
+.container{max-width:1080px;margin:0 auto;width:100%;}
+.s-label{font-family:'Montserrat',sans-serif;font-size:10px;letter-spacing:5px;color:var(--pro);text-transform:uppercase;margin-bottom:14px;opacity:.8;}
+.s-title{font-family:'Montserrat',sans-serif;font-size:clamp(28px,4vw,46px);font-weight:700;line-height:1.15;margin-bottom:18px;}
+.s-body{font-size:17px;line-height:1.78;color:var(--text2);max-width:760px;}
+.meta-box{border-left:4px solid var(--pro);border-radius:0 14px 14px 0;padding:22px 26px;margin:28px 0;}
+.meta-box.amber{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border-color:var(--pro);}
+.meta-box.blue{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-color:var(--epi);}
+.meta-box.green{background:linear-gradient(135deg,#ECFDF5,#D1FAE5);border-color:var(--green);}
+.meta-box.gray{background:var(--bg2);border-color:var(--border2);}
+.meta-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:8px;}
+.meta-box.amber .meta-label{color:var(--pro);}
+.meta-box.blue .meta-label{color:var(--epi);}
+.meta-box.green .meta-label{color:var(--green);}
+.meta-box.gray .meta-label{color:var(--muted);}
+.meta-text{font-size:16px;line-height:1.72;color:var(--text2);font-style:italic;}
+.cite{font-size:12px;color:var(--muted);margin-top:10px;font-style:italic;border-left:2px solid var(--border2);padding-left:10px;}
+.divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);margin:48px 0;}
+
+/* OUTCOME */
+#desenlace{background:linear-gradient(155deg,#FAF9F6 0%,#F5EDD8 50%,#FAF9F6 100%);}
+.outcome-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:44px;}
+@media(max-width:768px){.outcome-grid{grid-template-columns:1fr;}nav{padding:10px 16px;}section{padding:80px 20px 50px;}.nav-parts{display:none;}}
+.outcome-card{background:var(--white);border-radius:20px;padding:36px;border:1px solid var(--border);box-shadow:var(--shadow);position:relative;overflow:hidden;}
+.outcome-card.pro-out{border-top:5px solid var(--pro);}
+.outcome-card.epi-out{border-top:5px solid var(--epi);}
+.outcome-emoji{font-size:44px;margin-bottom:16px;}
+.outcome-title{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:700;margin-bottom:20px;}
+.outcome-card.pro-out .outcome-title{color:var(--pro);}
+.outcome-card.epi-out .outcome-title{color:var(--epi);}
+.out-item{display:flex;align-items:flex-start;gap:11px;margin-bottom:15px;font-size:14px;line-height:1.62;}
+.out-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.outcome-card.pro-out .out-dot{background:var(--pro);}
+.outcome-card.epi-out .out-dot{background:var(--epi);opacity:.5;}
+.out-item .body{color:var(--text2);}
+.out-item strong{color:var(--text);}
+.outcome-verdict{margin-top:22px;padding:16px;border-radius:12px;font-size:14px;line-height:1.6;}
+.outcome-card.pro-out .outcome-verdict{background:var(--pro-l);color:var(--pro-d);}
+.outcome-card.epi-out .outcome-verdict{background:var(--epi-l);color:var(--epi-d);}
+
+/* REAL COMPANIES THAT FELL */
+.fell-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:32px 0;}
+@media(max-width:768px){.fell-grid{grid-template-columns:1fr 1fr;}}
+.fell-card{background:var(--white);border-radius:14px;padding:20px;border:1px solid var(--border);box-shadow:var(--shadow);text-align:center;border-top:3px solid #DC2626;}
+.fell-icon{font-size:28px;margin-bottom:10px;}
+.fell-name{font-family:'Montserrat',sans-serif;font-size:14px;color:var(--text);margin-bottom:7px;font-weight:700;}
+.fell-body{font-size:12px;color:var(--muted);line-height:1.55;}
+.fell-year{font-size:11px;color:#DC2626;font-weight:600;margin-top:7px;}
+
+/* STAT */
+.stat-row{margin:14px 0;}
+.stat-label{font-size:13px;color:var(--text2);margin-bottom:6px;display:flex;justify-content:space-between;}
+.stat-label strong{color:var(--pro);}
+.stat-track{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+.stat-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--ember),var(--fire));animation:grow 1.5s ease forwards;width:0;}
+@keyframes grow{to{width:var(--w);}}
+
+/* REFLECTION */
+#reflexion{background:linear-gradient(160deg,#FFFBEB 0%,#FEF3C7 30%,#FAF9F6 100%);}
+.reflex-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:40px;}
+@media(max-width:900px){.reflex-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:520px){.reflex-grid{grid-template-columns:1fr;}}
+.reflex-card{background:var(--white);border-radius:16px;padding:24px 18px;border:1px solid var(--border);box-shadow:var(--shadow);text-align:center;transition:all .3s;cursor:default;}
+.reflex-card:hover{border-color:rgba(194,96,10,.3);box-shadow:var(--shadow-lg);transform:translateY(-3px);}
+.reflex-icon{font-size:32px;margin-bottom:11px;}
+.reflex-title{font-family:'Montserrat',sans-serif;font-size:14px;color:var(--pro);margin-bottom:8px;font-weight:700;}
+.reflex-text{font-size:13px;color:var(--muted);line-height:1.58;}
+.reflex-q{font-size:13px;color:var(--text2);margin-top:10px;font-style:italic;line-height:1.55;background:var(--bg2);border-radius:8px;padding:10px 12px;}
+
+/* SELF ASSESSMENT */
+#autoeval{background:var(--bg);}
+.eval-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:36px 0;}
+@media(max-width:768px){.eval-grid{grid-template-columns:1fr;}}
+.eval-card{background:var(--white);border-radius:16px;padding:26px;border:1px solid var(--border);box-shadow:var(--shadow);}
+.eval-q{font-size:15px;font-weight:600;color:var(--text);margin-bottom:16px;line-height:1.5;}
+.eval-scale{display:flex;gap:8px;margin-bottom:8px;}
+.eval-btn{flex:1;padding:8px 4px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg2);font-size:12px;color:var(--muted);cursor:pointer;transition:all .2s;text-align:center;font-family:'Inter',sans-serif;}
+.eval-btn:hover{border-color:var(--pro);color:var(--pro);background:var(--pro-l);}
+.eval-btn.selected{background:var(--pro);color:#fff;border-color:var(--pro);}
+.eval-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px;}
+.eval-result{display:none;margin-top:14px;padding:12px;border-radius:10px;font-size:13px;line-height:1.55;}
+
+/* CTA */
+.cta-block{margin-top:56px;padding:48px;border-radius:24px;background:linear-gradient(135deg,var(--pro-l),#FFEDD5);border:1px solid rgba(194,96,10,.2);text-align:center;}
+.cta-title{font-family:'Montserrat',sans-serif;font-size:clamp(26px,4vw,44px);font-weight:900;color:var(--text);margin-bottom:14px;line-height:1.1;}
+.cta-title span{color:var(--pro);}
+.cta-sub{font-size:17px;color:var(--text2);margin-bottom:32px;max-width:560px;margin-left:auto;margin-right:auto;}
+.cta-btn{display:inline-block;padding:16px 44px;border-radius:50px;background:linear-gradient(135deg,var(--ember),var(--pro));color:#fff;font-weight:700;font-size:15px;letter-spacing:.5px;text-transform:uppercase;border:none;cursor:pointer;transition:transform .2s,box-shadow .2s;font-family:'Inter',sans-serif;text-decoration:none;}
+.cta-btn:hover{transform:scale(1.04);box-shadow:0 8px 30px rgba(194,96,10,.35);}
+
+/* QUOTE BLOCK */
+.quote-block{background:var(--white);border-radius:16px;padding:32px 36px;border:1px solid var(--border);box-shadow:var(--shadow);margin:24px 0;position:relative;}
+.quote-mark{font-family:'Montserrat',sans-serif;font-size:80px;color:rgba(194,96,10,.1);position:absolute;top:-10px;left:20px;line-height:1;}
+.quote-text{font-size:18px;line-height:1.72;color:var(--text);font-style:italic;margin-bottom:12px;}
+.quote-author{font-size:13px;color:var(--muted);font-weight:600;}
+
+/* FINAL MYTH */
+#final-myth{background:linear-gradient(160deg,#F5EDD8 0%,#FAF9F6 60%,#F0F4FF 100%);text-align:center;}
+
+.part-nav{display:flex;justify-content:space-between;align-items:center;padding:28px 40px;border-top:1px solid var(--border);background:var(--white);}
+.part-nav a{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--pro);text-decoration:none;padding:10px 22px;border-radius:24px;border:1.5px solid rgba(194,96,10,.3);transition:all .2s;}
+.part-nav a:hover{background:var(--pro);color:#fff;border-color:var(--pro);}
+.part-nav .center{font-family:'Montserrat',sans-serif;font-size:12px;color:var(--muted);letter-spacing:2px;}
+.fi{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease;}
+.fi.v{opacity:1;transform:translateY(0);}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}.d4{transition-delay:.4s;}
+footer{text-align:center;padding:28px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);}
+/* ── TIPOGRAFÍA: Poppins UI · Montserrat títulos · Open Sans cuerpo ── */
+.nav-brand,.s-label,.meta-label,.badge,.part-link,.cite,.stat-label span,.tip-title,.dato-label{font-family:'Poppins',sans-serif;}
+.s-title,.char-name,.act-title,.pillar-title,.vs-title,.case-title,.hero-title,.section-title,.comp-title,.quiz-title{font-family:'Montserrat',sans-serif;font-weight:800;letter-spacing:-.02em;}
+.s-body,.char-desc,.vs-item p,.case-body,.act-body,.fi p,.fi li,.fi ul,.fi ol,.pillar-body,.quiz-body{font-family:'Open Sans',sans-serif;font-size:16px;line-height:1.82;color:var(--text2);}
+.tip-ia{background:#EFF6FF;border-left:4px solid #2563EB;border-radius:10px;padding:20px 24px;margin:24px 0;}
+.tip-ia .tip-title{font-family:'Poppins',sans-serif;font-weight:700;color:#1D4ED8;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+.tip-ia ul{margin:0;padding-left:20px;font-family:'Open Sans',sans-serif;font-size:15px;line-height:1.8;color:#1E40AF;}
+.dato-clave{background:#FFFBEB;border-left:4px solid #D97706;border-radius:10px;padding:20px 24px;margin:24px 0;}
+.dato-clave .dato-label{font-family:'Poppins',sans-serif;font-weight:700;color:#92400E;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+.dato-clave p{font-family:'Open Sans',sans-serif;font-size:15px;line-height:1.8;color:#78350F;}
+</style>
+</head>
+<body>
+<div id="pbar"></div>
+
+<!-- DESENLACE -->
+<section id="desenlace">
+  <div class="container">
+    <p class="s-label fi">El desenlace</p>
+    <h2 class="s-title fi d1">Tres años después.<br>El mercado habló.</h2>
+    <p class="s-body fi d2">No es una predicción. Es el patrón que ya estamos viendo en retail, logística, servicios financieros, educación y salud. Prometeo y Epimeteo tomaron decisiones distintas en el mismo momento. El resultado no era inevitable — era predecible desde el primer día.</p>
+
+    <div class="outcome-grid fi d3">
+      <div class="outcome-card pro-out">
+        <div class="outcome-emoji">🏆</div>
+        <h3 class="outcome-title">Prometeo S.A. — Año 3</h3>
+        <div class="out-item"><div class="out-dot"></div><div class="body">Redujo costos operativos en <strong>38%</strong> sin reducir personal, reubicando al equipo en roles de mayor valor e impacto.</div></div>
+        <div class="out-item"><div class="out-dot"></div><div class="body">Triplicó su velocidad de respuesta al cliente. El NPS subió de 42 a 78 puntos. La reputación de "empresa ágil" le genera nuevos clientes orgánicamente.</div></div>
+        <div class="out-item"><div class="out-dot"></div><div class="body">Abrió dos nuevos mercados geográficos <strong>sin contratar nuevos equipos operativos</strong>. La IA escaló con el crecimiento sin costo lineal.</div></div>
+        <div class="out-item"><div class="out-dot"></div><div class="body">Captó el <strong>23% de participación de mercado</strong> que perdieron sus competidores más lentos en los últimos 18 meses.</div></div>
+        <div class="out-item"><div class="out-dot"></div><div class="body">Atrae mejor talento: los profesionales quieren trabajar en empresas donde la IA amplifica su capacidad, no donde los mantiene ocupados con tareas manuales.</div></div>
+        <div class="outcome-verdict">
+          <strong>Veredicto:</strong> No solo sobrevivió la transformación. La lideró. Y cuando sus competidores finalmente empezaron a adoptar IA, Prometeo ya estaba tres versiones más adelante — y la brecha continuaba creciendo.
+        </div>
+      </div>
+
+      <div class="outcome-card epi-out">
+        <div class="outcome-emoji">⚖️</div>
+        <h3 class="outcome-title">Epimeteo Corp. — Año 3</h3>
+        <div class="out-item"><div class="out-dot"></div><div class="body">Inició su transformación digital <strong>18 meses tarde</strong>. Pagó el triple por implementaciones de emergencia bajo presión competitiva. El costo de la urgencia fue mayor que el de la planificación.</div></div>
+        <div class="out-item"><div class="out-dot"></div><div class="body">Perdió tres clientes estratégicos ante competidores "más ágiles". Sus reuniones de dirección ahora tienen un tema recurrente: <em>"¿cómo nos pusieron tan detrás?"</em></div></div>
+        <div class="out-item"><div class="out-dot"></div><div class="body">Su margen operativo bajó 12 puntos mientras el de Prometeo subía. La <strong>brecha se amplía cada trimestre</strong> y los inversores empiezan a preguntar por la estrategia digital.</div></div>
+        <div class="out-item"><div class="out-dot"></div><div class="body">Rotación de talento: sus mejores empleados se van a empresas donde trabajan con IA. "No quiero pasar mi carrera haciendo copy-paste entre sistemas", dijo uno al renunciar.</div></div>
+        <div class="out-item"><div class="out-dot"></div><div class="body">El equipo está desmotivado. Saben que van detrás. La cultura de "esperar a que madure la tecnología" se transformó en una cultura de <strong>reactivo permanente</strong>.</div></div>
+        <div class="outcome-verdict">
+          <strong>La buena noticia:</strong> Epimeteo no está condenado. La historia mitológica no termina aquí. Puede cambiar. Pero cada mes que pasa sin decidir, el costo de alcanzar a Prometeo se duplica y la ventana de oportunidad se cierra.
+        </div>
+      </div>
+    </div>
+
+    <div class="divider fi"></div>
+
+    <h3 class="fi" style="font-family:'Montserrat',sans-serif;font-size:20px;margin-bottom:24px;">Empresas reales que esperaron demasiado</h3>
+    <div class="fell-grid fi d1">
+      <div class="fell-card">
+        <div class="fell-icon">📼</div>
+        <div class="fell-name">Blockbuster</div>
+        <div class="fell-body">Rechazó comprar Netflix por $50M en 2000. Prefirió esperar a que "el streaming madure". Para 2010 estaba en bancarrota.</div>
+        <div class="fell-year">Quiebra: 2010</div>
+      </div>
+      <div class="fell-card">
+        <div class="fell-icon">📷</div>
+        <div class="fell-name">Kodak</div>
+        <div class="fell-body">Inventó la cámara digital en 1975. Decidió no lanzarla para proteger su negocio de rollos fotográficos. Perdió a ambos.</div>
+        <div class="fell-year">Quiebra: 2012</div>
+      </div>
+      <div class="fell-card">
+        <div class="fell-icon">📱</div>
+        <div class="fell-name">Nokia</div>
+        <div class="fell-body">Dominaba el 40% del mercado de teléfonos en 2007. Desestimó el iPhone como "una moda". En 5 años perdió el 90% de su valor.</div>
+        <div class="fell-year">Vendida: 2013</div>
+      </div>
+      <div class="fell-card">
+        <div class="fell-icon">🏬</div>
+        <div class="fell-name">Sears</div>
+        <div class="fell-body">Fue el Amazon de su época. Tenía catálogo digital antes que nadie. Pero esperó a que el e-commerce "madure". Para 2018 estaba en quiebra.</div>
+        <div class="fell-year">Quiebra: 2018</div>
+      </div>
+    </div>
+    <p class="cite fi">— Harvard Business Review, "Why Good Companies Fail at Digital Transformation", 2023 / Forbes, "The Innovator's Dilemma Revisited"</p>
+
+    <div class="meta-box amber fi d2" style="margin-top:8px;">
+      <p class="meta-label">⚡ El Patrón Es Siempre el Mismo</p>
+      <p class="meta-text">Ninguna de estas empresas falló por falta de recursos. Fallaron por exceso de confianza en el presente y miedo a canibalizar su propio modelo. El error de Epimeteo no es técnico — es psicológico. La IA no es distinta a cada revolución tecnológica anterior: los que la adoptan primero no siempre ganan, pero los que esperan demasiado siempre pierden.</p>
+      <p class="cite">— Clayton Christensen, "The Innovator's Dilemma", 1997 / actualizado por MIT Digital Economy Initiative, 2023</p>
+    </div>
+  </div>
+</section>
+
+<!-- REFLEXIÓN -->
+<section id="reflexion">
+  <div class="container" style="text-align:center;">
+    <p class="s-label fi">La pregunta que importa</p>
+    <h2 class="s-title fi d1" style="max-width:680px;margin:0 auto 18px;">¿En cuál de los dos personajes<br>reconoces tu empresa hoy?</h2>
+    <p class="s-body fi d2" style="margin:0 auto;max-width:700px;">La historia de Prometeo y Epimeteo se repite hoy en cada industria. No es una pregunta de <em>si</em> adoptar IA — es una pregunta de <em>cuándo</em>. Y la única respuesta que te da ventaja es: <strong>ahora, con lo que tienes.</strong></p>
+
+    <div class="reflex-grid">
+      <div class="reflex-card fi">
+        <div class="reflex-icon">📊</div>
+        <div class="reflex-title">Data Analysis</div>
+        <div class="reflex-text">¿Tus decisiones se basan en datos del pasado o en predicciones del futuro?</div>
+        <div class="reflex-q">¿Cuántas horas tarda en llegar un reporte crítico desde que ocurre el evento?</div>
+      </div>
+      <div class="reflex-card fi d1">
+        <div class="reflex-icon">⚙️</div>
+        <div class="reflex-title">Automatización</div>
+        <div class="reflex-text">¿Cuántas horas semanales invierte tu equipo en tareas que una máquina podría hacer mejor?</div>
+        <div class="reflex-q">¿Existe algún proceso que hacen exactamente igual, semana tras semana, sin variación?</div>
+      </div>
+      <div class="reflex-card fi d2">
+        <div class="reflex-icon">🤖</div>
+        <div class="reflex-title">RPA</div>
+        <div class="reflex-text">¿Hay procesos en tu empresa que podrían ejecutarse solos mientras duermes?</div>
+        <div class="reflex-q">¿Qué tareas de tu equipo son básicamente "copiar datos de un sistema a otro"?</div>
+      </div>
+      <div class="reflex-card fi d3">
+        <div class="reflex-icon">🧠</div>
+        <div class="reflex-title">Agentes IA</div>
+        <div class="reflex-text">¿Qué tareas hoy manuales podrían ser manejadas por un colaborador digital 24/7?</div>
+        <div class="reflex-q">¿Tu cliente espera horas o días para obtener información que la IA podría dar en segundos?</div>
+      </div>
+    </div>
+
+    <div class="meta-box amber fi" style="max-width:800px;margin:40px auto 0;text-align:left;">
+      <p class="meta-label">🎯 La Reflexión de McKinsey</p>
+      <p class="meta-text">"Las empresas que más se benefician de la IA no son necesariamente las que invierten más — son las que integran la IA en más procesos de su cadena de valor. La amplitud de adopción importa más que la profundidad en una sola área."</p>
+      <p class="cite">— McKinsey Global Institute, "The economic potential of generative AI", 2023</p>
+    </div>
+  </div>
+</section>
+
+<!-- AUTO-EVALUACIÓN -->
+<section id="autoeval">
+  <div class="container">
+    <p class="s-label fi">Autoevaluación rápida</p>
+    <h2 class="s-title fi d1">¿Dónde está tu empresa<br>en el espectro Prometeo-Epimeteo?</h2>
+    <p class="s-body fi d2">Responde estas preguntas con honestidad. No hay respuestas correctas — hay un diagnóstico que te ayudará a saber por dónde empezar.</p>
+
+    <div class="eval-grid fi d3">
+      <div class="eval-card">
+        <div class="eval-q">¿Con qué frecuencia las decisiones de tu empresa se basan en análisis de datos actualizados?</div>
+        <div class="eval-scale">
+          <button class="eval-btn" onclick="evalSelect(this,'q1','epi')">Casi nunca</button>
+          <button class="eval-btn" onclick="evalSelect(this,'q1','mid')">A veces</button>
+          <button class="eval-btn" onclick="evalSelect(this,'q1','pro')">Siempre</button>
+        </div>
+        <div class="eval-labels"><span>🌊 Epimeteo</span><span>🔥 Prometeo</span></div>
+        <div id="q1-result" class="eval-result"></div>
+      </div>
+      <div class="eval-card">
+        <div class="eval-q">¿Qué porcentaje de tus procesos administrativos repetitivos están automatizados?</div>
+        <div class="eval-scale">
+          <button class="eval-btn" onclick="evalSelect(this,'q2','epi')">Menos del 20%</button>
+          <button class="eval-btn" onclick="evalSelect(this,'q2','mid')">20-60%</button>
+          <button class="eval-btn" onclick="evalSelect(this,'q2','pro')">Más del 60%</button>
+        </div>
+        <div class="eval-labels"><span>🌊 Epimeteo</span><span>🔥 Prometeo</span></div>
+        <div id="q2-result" class="eval-result"></div>
+      </div>
+      <div class="eval-card">
+        <div class="eval-q">¿Tu empresa usa robots de software (RPA) para tareas digitales repetitivas?</div>
+        <div class="eval-scale">
+          <button class="eval-btn" onclick="evalSelect(this,'q3','epi')">No, todo manual</button>
+          <button class="eval-btn" onclick="evalSelect(this,'q3','mid')">Explorando</button>
+          <button class="eval-btn" onclick="evalSelect(this,'q3','pro')">Sí, en producción</button>
+        </div>
+        <div class="eval-labels"><span>🌊 Epimeteo</span><span>🔥 Prometeo</span></div>
+        <div id="q3-result" class="eval-result"></div>
+      </div>
+      <div class="eval-card">
+        <div class="eval-q">¿Tienes agentes de IA gestionando algún proceso autónomamente?</div>
+        <div class="eval-scale">
+          <button class="eval-btn" onclick="evalSelect(this,'q4','epi')">No, nunca</button>
+          <button class="eval-btn" onclick="evalSelect(this,'q4','mid')">Piloto en marcha</button>
+          <button class="eval-btn" onclick="evalSelect(this,'q4','pro')">Varios en operación</button>
+        </div>
+        <div class="eval-labels"><span>🌊 Epimeteo</span><span>🔥 Prometeo</span></div>
+        <div id="q4-result" class="eval-result"></div>
+      </div>
+    </div>
+
+    <div id="score-display" class="meta-box gray fi" style="display:none;margin-top:8px;">
+      <p class="meta-label" id="score-label">📊 Tu Diagnóstico</p>
+      <p class="meta-text" id="score-text"></p>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL MYTH + CTA -->
+<section id="final-myth">
+  <div class="container" style="text-align:center;">
+    <p class="s-label fi">El mensaje final</p>
+    <h2 class="s-title fi d1" style="max-width:700px;margin:0 auto 20px;">El fuego ya existe.<br>Solo hay que decidir tomarlo.</h2>
+
+    <div class="quote-block fi d2" style="max-width:760px;margin:0 auto 32px;text-align:left;">
+      <div class="quote-mark">"</div>
+      <p class="quote-text">Prometeo fue encadenado a una roca por atreverse a entregar el fuego a los humanos. Pero los humanos prosperaron. El conocimiento que libera nunca es cómodo de adoptar — pero siempre vale más que el costo de ignorarlo.</p>
+      <p class="quote-author">— Adaptado de Hesíodo, "Teogonía" (700 a.C.) · Aplicado al contexto empresarial contemporáneo</p>
+    </div>
+
+    <p class="s-body fi d3" style="margin:0 auto 36px;max-width:680px;">
+      La IA no es el fuego de los dioses guardado en el Olimpo. Ya está disponible, accesible y demostrada. La única cadena que puede detenerte es la que tú mismo te pongas al decir: <em>"todavía no es el momento."</em>
+    </p>
+
+    <!-- Final stats row -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:36px 0;" class="fi d3">
+      <div style="background:var(--white);border-radius:14px;padding:20px;border:1px solid var(--border);box-shadow:var(--shadow);">
+        <div style="font-family:'Montserrat',sans-serif;font-size:28px;font-weight:800;color:var(--pro);">72%</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:5px;line-height:1.4;">de empresas Fortune 500 ya tienen IA integrada en operaciones core</div>
+      </div>
+      <div style="background:var(--white);border-radius:14px;padding:20px;border:1px solid var(--border);box-shadow:var(--shadow);">
+        <div style="font-family:'Montserrat',sans-serif;font-size:28px;font-weight:800;color:var(--pro);">$4.4T</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:5px;line-height:1.4;">Valor potencial que la IA generativa puede agregar globalmente al año</div>
+      </div>
+      <div style="background:var(--white);border-radius:14px;padding:20px;border:1px solid var(--border);box-shadow:var(--shadow);">
+        <div style="font-family:'Montserrat',sans-serif;font-size:28px;font-weight:800;color:var(--pro);">2027</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:5px;line-height:1.4;">Año en que Gartner proyecta que el 80% de las empresas usarán IA generativa en producción</div>
+      </div>
+      <div style="background:var(--white);border-radius:14px;padding:20px;border:1px solid var(--border);box-shadow:var(--shadow);">
+        <div style="font-family:'Montserrat',sans-serif;font-size:28px;font-weight:800;color:var(--pro);">Hoy</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:5px;line-height:1.4;">El único momento en que adoptar IA te da ventaja sobre quienes aún esperan</div>
+      </div>
+    </div>
+    <p class="cite fi">— McKinsey Global Institute, "The economic potential of generative AI", 2023 / Gartner Forecasts 2024-2027</p>
+
+    <div class="cta-block fi d4">
+      <h3 class="cta-title">¿Eres <span>Prometeo</span> o Epimeteo?<br>La decisión es ahora.</h3>
+      <p class="cta-sub">En las próximas lecciones exploraremos cómo implementar cada pilar de IA en tu negocio, paso a paso, con herramientas reales y presupuestos reales.</p>
+      <a href="prometeo-parte1.html" class="cta-btn">← Reiniciar desde el principio</a>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:32px;" class="fi">
+      <a href="prometeo-parte1.html" style="display:block;background:var(--white);border-radius:12px;padding:16px;border:1px solid var(--border);text-align:center;text-decoration:none;transition:all .2s;color:var(--text2);font-size:13px;" onmouseover="this.style.borderColor='var(--pro)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="font-size:22px;margin-bottom:6px;">1️⃣</div>
+        <div style="font-family:'Montserrat',sans-serif;font-size:12px;color:var(--pro);margin-bottom:4px;">Parte 1</div>
+        Personajes &amp; Pilares
+      </a>
+      <a href="prometeo-parte2.html" style="display:block;background:var(--white);border-radius:12px;padding:16px;border:1px solid var(--border);text-align:center;text-decoration:none;transition:all .2s;color:var(--text2);font-size:13px;" onmouseover="this.style.borderColor='var(--pro)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="font-size:22px;margin-bottom:6px;">2️⃣</div>
+        <div style="font-family:'Montserrat',sans-serif;font-size:12px;color:var(--pro);margin-bottom:4px;">Parte 2</div>
+        Data &amp; Automatización
+      </a>
+      <a href="prometeo-parte3.html" style="display:block;background:var(--white);border-radius:12px;padding:16px;border:1px solid var(--border);text-align:center;text-decoration:none;transition:all .2s;color:var(--text2);font-size:13px;" onmouseover="this.style.borderColor='var(--pro)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="font-size:22px;margin-bottom:6px;">3️⃣</div>
+        <div style="font-family:'Montserrat',sans-serif;font-size:12px;color:var(--pro);margin-bottom:4px;">Parte 3</div>
+        RPA &amp; Agentes IA
+      </a>
+      <a href="prometeo-parte4.html" style="display:block;background:var(--pro-l);border-radius:12px;padding:16px;border:1px solid rgba(194,96,10,.25);text-align:center;text-decoration:none;color:var(--pro-d);font-size:13px;font-weight:600;">
+        <div style="font-size:22px;margin-bottom:6px;">4️⃣</div>
+        <div style="font-family:'Montserrat',sans-serif;font-size:12px;color:var(--pro);margin-bottom:4px;">Parte 4</div>
+        Desenlace &amp; Reflexión
+      </a>
+    </div>
+  </div>
+</section>
+
+<section style="background:linear-gradient(160deg,#F0FDF4 0%,#DCFCE7 40%,#FAF9F6 100%);padding:72px 40px;">
+  <div class="container">
+    <p class="s-label fi">Tu Plan de Acción</p>
+    <h2 class="s-title fi" style="margin-bottom:8px;">Hoja de Ruta: 90 Días para Ser Prometeo</h2>
+    <p class="fi" style="font-family:'Open Sans',sans-serif;font-size:17px;color:var(--text2);margin-bottom:36px;">Un plan concreto y medible para pasar de espectador a implementador de IA en tu organización.</p>
+
+    <!-- 90-DAY ROADMAP -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:32px;" class="fi d1">
+      <div style="background:#fff;border-radius:16px;padding:24px;border:2px solid #16A34A;box-shadow:var(--shadow);">
+        <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:11px;letter-spacing:3px;color:#16A34A;text-transform:uppercase;margin-bottom:10px;">Semanas 1–4</div>
+        <h3 style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:18px;color:var(--text);margin-bottom:14px;">🔍 Auditoría y Base</h3>
+        <ul style="font-family:'Open Sans',sans-serif;font-size:14px;line-height:1.85;color:var(--text2);padding-left:18px;">
+          <li>Mapea todos tus procesos manuales repetitivos</li>
+          <li>Identifica tus 3 mayores cuellos de botella operativos</li>
+          <li>Audita calidad y accesibilidad de tus datos actuales</li>
+          <li>Define el presupuesto inicial de experimentación IA</li>
+          <li>Forma un equipo de adopción IA (no hace falta ser técnico)</li>
+        </ul>
+        <div style="margin-top:16px;padding:10px 14px;background:#F0FDF4;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12px;color:#15803D;font-weight:600;">Meta: 3 oportunidades IA priorizadas</div>
+      </div>
+      <div style="background:#fff;border-radius:16px;padding:24px;border:2px solid #2563EB;box-shadow:var(--shadow);">
+        <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:11px;letter-spacing:3px;color:#2563EB;text-transform:uppercase;margin-bottom:10px;">Semanas 5–8</div>
+        <h3 style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:18px;color:var(--text);margin-bottom:14px;">🧪 Piloto Controlado</h3>
+        <ul style="font-family:'Open Sans',sans-serif;font-size:14px;line-height:1.85;color:var(--text2);padding-left:18px;">
+          <li>Elige 1 proyecto IA de bajo riesgo y alto aprendizaje</li>
+          <li>Implementa con herramienta existente (no construyas desde cero)</li>
+          <li>Asigna un "AI Champion" responsable del piloto</li>
+          <li>Establece métricas de éxito antes de empezar</li>
+          <li>Documenta cada aprendizaje: lo que funciona y lo que no</li>
+        </ul>
+        <div style="margin-top:16px;padding:10px 14px;background:#EFF6FF;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12px;color:#1D4ED8;font-weight:600;">Meta: 1 proceso IA operativo y medido</div>
+      </div>
+      <div style="background:#fff;border-radius:16px;padding:24px;border:2px solid var(--pro);box-shadow:var(--shadow);">
+        <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:11px;letter-spacing:3px;color:var(--pro);text-transform:uppercase;margin-bottom:10px;">Semanas 9–12</div>
+        <h3 style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:18px;color:var(--text);margin-bottom:14px;">🚀 Escala e Institucionalización</h3>
+        <ul style="font-family:'Open Sans',sans-serif;font-size:14px;line-height:1.85;color:var(--text2);padding-left:18px;">
+          <li>Replica el piloto exitoso en 2-3 áreas adicionales</li>
+          <li>Crea políticas de uso de IA para tu organización</li>
+          <li>Capacita al equipo: todos deben saber trabajar con IA</li>
+          <li>Conecta tus herramientas IA entre sí (stack integrado)</li>
+          <li>Presenta resultados al liderazgo con ROI documentado</li>
+        </ul>
+        <div style="margin-top:16px;padding:10px 14px;background:var(--pro-l);border-radius:8px;font-family:'Poppins',sans-serif;font-size:12px;color:var(--pro-d);font-weight:600;">Meta: IA como ventaja competitiva sostenible</div>
+      </div>
+    </div>
+
+    <!-- KPI FRAMEWORK -->
+    <div class="fi d2">
+      <h3 style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:22px;color:var(--text);margin-bottom:20px;">📊 Marco de Medición: KPIs de Adopción IA</h3>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">
+        <div class="tip-ia">
+          <p class="tip-title">⚡ KPIs de Eficiencia Operativa</p>
+          <ul>
+            <li><strong>Tiempo de ciclo reducido:</strong> Antes vs después de automatizar el proceso. Objetivo: -40% mínimo.</li>
+            <li><strong>Horas-hombre liberadas/semana:</strong> Capacidad humana redirigida a tareas de mayor valor.</li>
+            <li><strong>Tasa de errores manuales:</strong> Reducción de retrabajos y correcciones post-proceso.</li>
+          </ul>
+        </div>
+        <div class="tip-ia">
+          <p class="tip-title">💰 KPIs de Impacto Financiero</p>
+          <ul>
+            <li><strong>ROI del proyecto IA:</strong> (Beneficio obtenido − Costo de implementación) / Costo × 100. Meta: &gt;150% en 12 meses.</li>
+            <li><strong>Costo por transacción:</strong> Comparación pre/post automatización.</li>
+            <li><strong>Revenue generado por insight de datos:</strong> Decisiones tomadas con datos que impactaron ventas.</li>
+          </ul>
+        </div>
+        <div class="dato-clave">
+          <p class="dato-label">📈 KPIs de Madurez y Adopción</p>
+          <p><strong>% de procesos clave con IA integrada</strong> (meta: 30% al año 1) · <strong>NPS interno de herramientas IA</strong> (¿el equipo las usa y las recomienda?) · <strong>Velocidad de decisión</strong> (días para tomar decisiones basadas en datos: de semanas a horas).</p>
+        </div>
+        <div class="dato-clave">
+          <p class="dato-label">🎯 Benchmark de Referencia (McKinsey 2024)</p>
+          <p>Empresas en el cuartil superior de adopción IA reportan <strong>+2.3× crecimiento de ingresos</strong> vs promedio del sector, <strong>-32% en costos operativos</strong> y <strong>+45% en velocidad de lanzamiento</strong> de nuevos productos y servicios.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(135deg,var(--pro-l),#FFF7ED);border-radius:16px;padding:24px 28px;margin-top:28px;border-left:4px solid var(--pro);" class="fi d3">
+      <p style="font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;color:var(--pro-d);letter-spacing:1px;margin-bottom:8px;">🔥 REGLA FINAL DE PROMETEO</p>
+      <p style="font-family:'Open Sans',sans-serif;font-size:16px;color:var(--text2);line-height:1.75;"><strong>"El fuego no se acumula. Se usa."</strong> El conocimiento que no se aplica en 90 días se convierte en deuda estratégica. Cada día sin IA es una ventaja que cedes a tu competencia. La pregunta no es si adoptar IA — es cuánto más vas a esperar para ser Prometeo.</p>
+    </div>
+  </div>
+</section>
+
+<div class="part-nav">
+  <a href="prometeo-parte3.html">← Parte 3: RPA &amp; Agentes IA</a>
+  <span class="center">PARTE 4 DE 4 · XPROF IA</span>
+  <a href="prometeo-parte1.html">Volver al inicio →</a>
+</div>
+<footer>
+  <p>© 2026 XPROF Technology and Innovation</p>
+  <p style="margin-top:6px;opacity:.6;">Prometeo vs Epimeteo — El Fuego de la Inteligencia Artificial</p>
+</footer>
+
+<script>
+const pb=document.getElementById('pbar');
+window.addEventListener('scroll',()=>{pb.style.width=(window.scrollY/(document.body.scrollHeight-window.innerHeight)*100)+'%';});
+const secs=['desenlace','reflexion','autoeval','final-myth'];
+const dots=document.querySelectorAll('.nav-dot');
+dots.forEach((d,i)=>d.addEventListener('click',()=>document.getElementById(secs[i])?.scrollIntoView({behavior:'smooth'})));
+function updDots(){const m=window.innerHeight/2;let a=0;secs.forEach((id,i)=>{const r=document.getElementById(id)?.getBoundingClientRect();if(r&&r.top<=m)a=i;});dots.forEach((d,i)=>d.classList.toggle('active',i===a));}
+window.addEventListener('scroll',updDots);updDots();
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('v');e.target.querySelectorAll('.stat-fill').forEach(f=>{f.style.animation='none';f.offsetHeight;f.style.animation='grow 1.5s ease forwards';});}}),{threshold:.12});
+document.querySelectorAll('.fi').forEach(el=>obs.observe(el));
+
+// Auto-evaluation
+const scores={};
+const msgs={
+  epi:'🌊 Perfil Epimeteo — Tu empresa está en etapas tempranas de adopción de IA. El potencial de mejora es enorme. El momento ideal para empezar fue ayer; el segundo mejor momento es hoy.',
+  mid:'⚡ Perfil en Transición — Tu empresa está adoptando IA en algunas áreas. El desafío ahora es ampliar la integración para que los pilares se potencien mutuamente.',
+  pro:'🔥 Perfil Prometeo — Tu empresa está en el camino correcto. El siguiente paso es profundizar en los pilares menos desarrollados y conectarlos para maximizar el valor.'
+};
+
+function evalSelect(btn, qid, level){
+  const parent=btn.closest('.eval-card');
+  parent.querySelectorAll('.eval-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  scores[qid]=level;
+  const res=document.getElementById(qid+'-result');
+  const resMap={
+    epi:{q1:'Hay una oportunidad enorme aquí. Los sistemas de BI con IA pueden darte respuestas en tiempo real en lugar de reportes retrospectivos.',q2:'El 80% de las empresas que empiezan automatización ven ROI positivo en los primeros 6 meses.',q3:'El RPA es frecuentemente el punto de entrada más rápido con mayor ROI inicial. Vale explorarlo.',q4:'Los agentes IA de atención al cliente son el caso de uso más maduro y con menor barrera de entrada hoy.'},
+    mid:{q1:'Bien encaminado. El siguiente paso es hacer las predicciones más proactivas y conectarlas a acciones automáticas.',q2:'La fase intermedia es la más crítica. Hay que ampliar para capturar el valor de la escala.',q3:'El piloto es el paso más difícil. Una vez en producción, el valor es inmediato y comprobable.',q4:'Un piloto exitoso típicamente genera patrocinadores internos que aceleran el despliegue completo.'},
+    pro:{q1:'Excelente. Asegúrate de que los insights de datos estén conectados directamente a acciones automatizadas.',q2:'A este nivel, el foco debe ser optimizar los flujos y conectar automatización con datos e IA.',q3:'Con RPA en producción, el siguiente paso natural son los agentes que toman decisiones más complejas.',q4:'Empresa de vanguardia. El desafío ahora es la gobernanza y la mejora continua de los modelos.'}
+  };
+  if(res){res.style.display='block';res.style.background=level==='pro'?'#D1FAE5':level==='mid'?'#FEF3C7':'#FEE2E2';res.style.color=level==='pro'?'#065F46':level==='mid'?'#92400E':'#991B1B';res.textContent=resMap[level][qid]||'';}
+  updateScore();
+}
+
+function updateScore(){
+  const vals=Object.values(scores);
+  if(vals.length<4)return;
+  const score={pro:0,mid:0,epi:0};
+  vals.forEach(v=>score[v]++);
+  let level=score.pro>=3?'pro':score.epi>=3?'epi':'mid';
+  const sd=document.getElementById('score-display');
+  const sl=document.getElementById('score-label');
+  const st=document.getElementById('score-text');
+  sd.style.display='block';
+  sl.textContent=level==='pro'?'🔥 Diagnóstico: Perfil Prometeo':level==='epi'?'🌊 Diagnóstico: Perfil Epimeteo':'⚡ Diagnóstico: En Transición';
+  sd.style.background=level==='pro'?'linear-gradient(135deg,#ECFDF5,#D1FAE5)':level==='epi'?'linear-gradient(135deg,#EFF6FF,#DBEAFE)':'linear-gradient(135deg,#FFFBEB,#FEF3C7)';
+  sd.style.borderLeftColor=level==='pro'?'#059669':level==='epi'?'#0369A1':'#C2600A';
+  st.textContent=msgs[level];
+  sd.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+</script>
+</body>
+</html>
